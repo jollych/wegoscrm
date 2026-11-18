@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>微购相册 SCRM 核心页面原型</title>
+<style>
+:root{--g:#07C160;--g2:#E7F8EF;--ink:#1D2129;--mut:#86909C;--line:#EEF0F3;--bg:#F5F6F8;--blue:#2A5DA8;--org:#F58A1F;--orgbg:#FFF3E5;--red:#E5484D;--redbg:#FDECEC;--pur:#7556C2;--purbg:#F1EAFB}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,"PingFang SC","Noto Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;background:#E8EBEF;color:var(--ink);font-size:14px;line-height:1.45}
+button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
+.app{display:grid;grid-template-columns:230px 410px minmax(260px,330px);gap:28px;justify-content:center;padding:24px 20px;min-height:100vh;align-items:start}
+@media(max-width:1060px){.app{grid-template-columns:1fr;justify-items:center}}
+
+/* side panels */
+.nav,.note{position:sticky;top:24px;max-height:calc(100vh - 48px);overflow:auto}
+.nav h1{font-size:17px;margin-bottom:4px}
+.nav .sub{color:var(--mut);font-size:12px;margin-bottom:16px}
+.nav h2,.note h2{font-size:12px;color:var(--mut);font-weight:500;margin:16px 0 6px}
+.nav button.i{display:flex;width:100%;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:8px;text-align:left}
+.nav button.i:hover{background:#DDE1E6}
+.nav button.i.on{background:#fff;font-weight:600;box-shadow:0 1px 0 rgba(0,0,0,.06)}
+.nav .sc{display:block;width:100%;text-align:left;padding:10px;border-radius:10px;background:#fff;margin-bottom:8px;border:1px solid transparent}
+.nav .sc.on{border-color:var(--g)}
+.nav .sc b{display:block;font-size:13px}
+.nav .sc span{font-size:12px;color:var(--mut)}
+.tg{font-size:11px;padding:1px 6px;border-radius:4px;font-weight:500;white-space:nowrap}
+.tg.new{background:var(--g2);color:#07934B}
+.tg.mod{background:var(--orgbg);color:#C66A0C}
+.tg.old{background:#ECEEF1;color:#6B7480}
+.note{background:#fff;border-radius:14px;padding:16px}
+.note h3{font-size:15px;margin-bottom:6px;display:flex;gap:8px;align-items:center}
+.note p,.note li{font-size:12.5px;color:#4E5969}
+.note ul{padding-left:16px;margin-top:6px}
+.note li{margin-bottom:4px}
+.steps{list-style:none;padding:0!important;margin-top:8px}
+.steps li{display:flex;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px;margin:0}
+.steps li i{flex:none;width:18px;height:18px;border-radius:50%;border:1.5px solid #C9CDD4;font-style:normal;font-size:11px;display:grid;place-items:center;color:#fff}
+.steps li.done i{background:var(--g);border-color:var(--g)}
+.steps li.done{color:var(--mut)}
+.steps li.next{color:var(--ink);font-weight:600}
+.steps li.next i{border-color:var(--g)}
+
+/* phone */
+.phone{width:390px;height:812px;background:#fff;border-radius:42px;border:9px solid #1D2129;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 18px 40px rgba(20,30,50,.18)}
+.sb{height:34px;flex:none;display:flex;justify-content:space-between;align-items:flex-end;padding:0 24px 4px;font-size:12px;font-weight:600;background:#fff}
+.screen{display:none;flex:1;min-height:0;flex-direction:column;background:var(--bg);position:relative}
+.screen.on{display:flex}
+.hd{height:46px;flex:none;background:#fff;display:flex;align-items:center;padding:0 14px;gap:10px;border-bottom:1px solid var(--line)}
+.hd .bk{width:26px;font-size:22px;line-height:1;color:var(--ink)}
+.hd .t{flex:1;font-size:16px;font-weight:600;text-align:center}
+.hd .r{min-width:26px;text-align:right;font-size:13px}
+.hd.left .t{text-align:left}
+.body{flex:1;min-height:0;overflow-y:auto;padding:12px 12px 20px}
+.body::-webkit-scrollbar{width:0}
+.foot{flex:none;background:#fff;border-top:1px solid var(--line);padding:10px 12px;display:flex;gap:10px;align-items:center}
+.card{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px}
+.card>.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.card>.ch b{font-size:15px}
+.link{color:var(--blue);font-size:13px;cursor:pointer}
+.mut{color:var(--mut)}
+.sm{font-size:12px}
+.btn{height:40px;padding:0 18px;border-radius:8px;background:var(--g);color:#fff;font-weight:600}
+.btn.sec{background:#fff;color:var(--g);border:1px solid var(--g)}
+.btn.grey{background:#F2F3F5;color:var(--ink);font-weight:500}
+.btn.sm{height:30px;padding:0 12px;font-size:13px;border-radius:6px}
+.btn.block{flex:1}
+.chip{display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:14px;background:#F2F3F5;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.chip.on{background:var(--g2);color:#07934B;font-weight:600}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.chips::-webkit-scrollbar{height:0}
+.seg{display:inline-flex;background:#F2F3F5;border-radius:8px;padding:2px}
+.seg button{padding:3px 12px;border-radius:6px;font-size:13px;color:#4E5969}
+.seg button.on{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.ai{display:inline-block;background:var(--pur);color:#fff;font-size:10.5px;font-weight:700;border-radius:8px;padding:0 6px;line-height:16px;vertical-align:middle}
+.lab{display:inline-block;font-size:11px;padding:0 6px;border-radius:4px;line-height:18px}
+.lab.o{background:var(--orgbg);color:#C66A0C}
+.lab.g{background:var(--g2);color:#07934B}
+.lab.r{background:var(--redbg);color:var(--red)}
+.lab.b{background:#E8F0FB;color:var(--blue)}
+.lab.n{background:#F2F3F5;color:#6B7480}
+.av{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:600;font-size:16px}
+.th{flex:none;display:block;width:54px;height:66px;border-radius:6px;background:linear-gradient(160deg,var(--a),var(--b));position:relative;overflow:hidden}
+.th::after{content:"";position:absolute;left:50%;bottom:-6px;width:60%;height:70%;transform:translateX(-50%);border-radius:40% 40% 8px 8px;background:rgba(255,255,255,.28)}
+.th.l{width:100%;height:130px}
+.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .m{flex:1;min-width:0}
+.row .m b{font-size:14.5px}
+.row .m div{font-size:12.5px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row.click{cursor:pointer}
+.cb{flex:none;width:20px;height:20px;border-radius:50%;border:1.5px solid #C9CDD4;display:grid;place-items:center;color:#fff;font-size:12px;cursor:pointer}
+.cb.on{background:var(--g);border-color:var(--g)}
+.sw{flex:none;width:42px;height:24px;border-radius:12px;background:#C9CDD4;position:relative;cursor:pointer;transition:background .15s}
+.sw::after{content:"";position:absolute;left:2px;top:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .15s}
+.sw.on{background:var(--g)}.sw.on::after{left:20px}
+.grid{display:grid;gap:8px}
+.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.g5{grid-template-columns:repeat(5,1fr)}.g2{grid-template-columns:1fr 1fr}
+.stat{text-align:center;cursor:pointer}
+.stat b{display:block;font-size:24px;font-weight:600;line-height:1.2}
+.stat span{font-size:12px;color:var(--mut)}
+.opp{background:#F8FAF9;border-radius:10px;padding:8px 2px;text-align:center;cursor:pointer;border:1px solid transparent}
+.opp b{display:block;font-size:20px;color:var(--org);line-height:1.2}
+.opp span{font-size:11.5px;color:#4E5969}
+.opp:hover{border-color:var(--g)}
+.bar{height:8px;background:#EEF0F3;border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--g);border-radius:4px}
+.bar.o i{background:var(--org)}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t th{font-weight:500;color:var(--mut);text-align:right;padding:4px 0;font-size:12px}
+table.t th:first-child,table.t td:first-child{text-align:left}
+table.t td{text-align:right;padding:10px 0;border-top:1px solid var(--line)}
+table.t tr.click{cursor:pointer}
+.toast{position:absolute;left:50%;bottom:90px;transform:translateX(-50%) translateY(8px);background:rgba(29,33,41,.92);color:#fff;padding:9px 16px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:50;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.sheet{position:absolute;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-end;z-index:20}
+.sheet.on{display:flex}
+.sheet>div{background:#fff;width:100%;border-radius:16px 16px 0 0;padding:16px}
+input.in,textarea.in{width:100%;border:0;background:#F2F3F5;border-radius:8px;padding:9px 12px;font:inherit;outline:none}
+.fld{display:flex;align-items:center;padding:13px 0;border-bottom:1px solid var(--line);gap:12px}
+.fld>span:first-child{width:78px;flex:none}
+.fld input{flex:1;border:0;outline:none;font:inherit;text-align:left;background:none}
+.hint{position:relative;outline:2px solid var(--g);outline-offset:2px;border-radius:8px;animation:pl 1.6s ease-in-out infinite}
+@keyframes pl{50%{outline-color:rgba(7,193,96,.2)}}
+@media(prefers-reduced-motion:reduce){.hint{animation:none}}
+button:focus-visible,.chip:focus-visible,.row:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.keys{flex:none;background:#D1D4DB;padding:6px 4px 10px;display:grid;gap:6px}
+.keys div{display:flex;gap:5px;justify-content:center}
+.keys i{flex:1;max-width:32px;height:34px;background:#fff;border-radius:5px;display:grid;place-items:center;font-style:normal;font-size:14px;box-shadow:0 1px 0 rgba(0,0,0,.25)}
+.bub{max-width:76%;padding:9px 12px;border-radius:8px;background:#fff;font-size:14px}
+.bub.me{background:#95EC69;margin-left:auto}
+.kpanel{flex:none;background:#F5F6F8;padding:8px 10px 6px;border-top:1px solid #E2E4E8}
+.kcard{background:#fff;border-radius:10px;padding:10px;margin-top:8px}
+.kline{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--line);font-size:12.5px;cursor:pointer}
+.kline:first-of-type{border-top:0}
+.kact{display:flex;gap:6px;margin-top:8px}
+.kact button{flex:1;height:30px;border-radius:6px;background:#F2F3F5;font-size:13px}
+</style>
+</head>
+<style>
+.tabs{display:flex;background:#fff;border-bottom:1px solid var(--line);flex:none}
+.tabs button{flex:1;height:42px;color:#4E5969;position:relative}
+.tabs button.on{color:var(--ink);font-weight:600}
+.tabs button.on::after{content:"";position:absolute;left:35%;right:35%;bottom:0;height:3px;border-radius:2px;background:var(--g)}
+.opt{display:flex;align-items:center;gap:10px;padding:10px;border:1.5px solid var(--line);border-radius:10px;margin-bottom:8px;cursor:pointer}
+.opt.on{border-color:var(--g);background:var(--g2)}
+.opt.out{opacity:.5;cursor:not-allowed}
+.sq{width:36px;height:36px;border-radius:10px;background:var(--g2);color:#07934B;display:grid;place-items:center;font-weight:700;font-size:15px}
+.qa{text-align:center;cursor:pointer;font-size:12.5px}
+.qa .sq{margin:0 auto 4px;width:42px;height:42px}
+.dl{font-size:11px}.dl.up{color:#07934B}.dl.dn{color:var(--red)}
+.fun{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:12.5px}
+.fun .n{width:72px;flex:none}.fun .v{width:84px;flex:none;text-align:right;color:var(--mut)}
+.fun .bar{flex:1}
+.disabled{opacity:.4;pointer-events:none}
+.legend{font-size:12px;color:var(--mut)}
+.wxh{background:#EDEDED}
+</style>
+<body>
+<div id="gate" style="position:fixed;inset:0;z-index:9999;background:#F4F6F5;display:flex;align-items:center;justify-content:center;font-family:-apple-system,'PingFang SC',sans-serif"><form onsubmit="return unlock(event)" style="background:#fff;border-radius:14px;padding:28px 26px;width:300px;box-shadow:0 4px 24px rgba(0,0,0,.08);text-align:center"><b style="font-size:18px">微购 SCRM 原型</b><div style="color:#86909C;font-size:13px;margin:6px 0 16px">请输入访问密码</div><input id="gpw" type="password" autocomplete="off" autofocus style="width:100%;box-sizing:border-box;height:40px;border:1px solid #DCDFE6;border-radius:8px;padding:0 12px;font-size:15px"><div id="gerr" style="color:#E5484D;font-size:12.5px;height:18px;margin-top:6px"></div><button style="width:100%;height:42px;border:0;border-radius:8px;background:#07C160;color:#fff;font-size:15px;font-weight:600;cursor:pointer">进入</button></form></div>
+<script>function hh(s,x){for(var i=0;i<s.length;i++)x=((x<<5)+x+s.charCodeAt(i))>>>0;return x}
+function unlock(e){e.preventDefault();var v=document.getElementById('gpw').value;if(hh(v,5381)+'-'+hh(v,52711)==='3500618880-398176098'){document.getElementById('gate').remove()}else{document.getElementById('gerr').textContent='密码不对，请重试'}return false}</script>
+
+<div class="app">
+  <aside class="nav">
+    <h1>微购相册 · SCRM</h1>
+    <div class="sub">核心页面可点击原型（零售）</div>
+    <h2>验收场景（★ 优先验收，点一下右侧有引导）</h2>
+    <div id="scnav"></div>
+    <h2>8 个核心页面</h2>
+    <div id="pagenav"></div>
+  </aside>
+  <main><div class="phone" id="phone">
+    <div class="sb"><span>9:41</span><span>5G ▮▮▮</span></div>
+    <div class="screen on" id="scr"></div>
+    <div class="sheet" id="sheet"></div>
+    <div class="toast" id="toast"></div>
+  </div></main>
+  <aside class="note" id="note"></aside>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const COL=['#07C160','#3E7BD6','#E58A2E','#9B6BD3','#E0566B','#2BA3A3'];
+const av=(n,i=0,sz)=>`<span class="av" style="background:${COL[i%6]}${sz?`;width:${sz}px;height:${sz}px;font-size:${sz*.4}px`:''}">${n[0]}</span>`;
+const th=(a,b,c='')=>`<span class="th ${c}" style="--a:${a};--b:${b}"></span>`;
+const COAT={n:'经典双排扣风衣',a:'#EADFCB',b:'#C9B896'};
+const NEW=[{n:'驼色羊绒针织开衫',a:'#D9B88F',b:'#B38A5A',s:'今天到货 · 128 件'},{n:'羊毛双面呢大衣',a:'#8E9AA8',b:'#5E6A78',s:'昨天到货 · 64 件'},{n:'加绒阔腿裤',a:'#7C8F7A',b:'#53664F',s:'降价到货 · 210 件'}];
+const COLORS=[{n:'米白',a:'#EADFCB',b:'#C9B896',s:5,tag:'上次购买'},{n:'卡其',a:'#C8AE86',b:'#9C8158',s:12},{n:'焦糖',a:'#B26A3B',b:'#7E4521',s:2,tag:'仅剩 2 件'},{n:'黑色',a:'#3A3A3E',b:'#1E1E22',s:0}];
+const C={
+ c1:{n:'王晓雯',o:'林悦',i:0,bound:1,opp:'高意向',oc:'o',r:'近 3 天看款 5 次，加购未买',tags:['通勤','M 码','偏米色系'],spend:'¥3,860'},
+ c2:{n:'李婷',o:'林悦',i:1,bound:1,opp:'复购与关联',oc:'g',r:'买过同品类，上次购买已 52 天',tags:['复购客','偏针织'],spend:'¥6,120'},
+ c3:{n:'陈佳怡',o:'陈小雨',i:2,bound:1,opp:'上新到货',oc:'b',r:'收藏的「驼色羊绒针织开衫」已补货',tags:['新客','偏驼色'],spend:'¥980'},
+ c4:{n:'刘芳',o:'王浩',i:3,bound:0,opp:'节点关怀',oc:'g',r:'生日在 3 天后',tags:['会员'],spend:'¥2,340'},
+ c5:{n:'周雨桐',o:'张凯',i:4,bound:1,opp:'流失召回',oc:'r',r:'86 天未互动，上次购买超过 80 天',tags:['老客'],spend:'¥4,410'},
+ c6:{n:'赵敏',o:'张凯',i:5,bound:1,opp:'高意向',oc:'o',r:'收藏 2 款，今天再次浏览',tags:['新客'],spend:'¥0'},
+ c7:{n:'孙莉',o:'张凯',i:0,bound:1,opp:'高意向',oc:'o',r:'近 3 天看款 4 次，加购未买',tags:['通勤'],spend:'¥1,260'},
+ c8:{n:'吴静',o:'张凯',i:1,bound:1,opp:'复购与关联',oc:'g',r:'上次购买已 45 天，买过同品类',tags:['复购客'],spend:'¥5,300'},
+ c9:{n:'黄琪',o:'张凯',i:2,bound:0,opp:'上新到货',oc:'b',r:'看过同风格 2 次',tags:['会员'],spend:'¥1,780'},
+ c10:{n:'郑雅',o:'张凯',i:3,bound:1,opp:'流失召回',oc:'r',r:'62 天未联系',tags:['老客'],spend:'¥2,900'},
+ c11:{n:'冯琳',o:'张凯',i:4,bound:0,opp:'',r:'48 天未联系',tags:['会员'],spend:'¥720'},
+ c13:{n:'林小夏',o:'林悦',i:5,bound:1,opp:'',r:'新客',tags:['新客'],spend:'¥0'},
+ c14:{n:'钱程',o:'无归属',i:0,bound:1,opp:'',r:'原导购已离职 · 120 天未联系',tags:['老客'],spend:'¥3,200'},
+ c15:{n:'孟欣',o:'无归属',i:1,bound:1,opp:'',r:'原导购已离职 · 96 天未联系',tags:['会员'],spend:'¥1,540'},
+ c16:{n:'潘月',o:'无归属',i:2,bound:0,opp:'',r:'扫码进入 · 从未被分配',tags:['新客'],spend:'¥0'},
+ c17:{n:'唐丽',o:'无归属',i:3,bound:1,opp:'',r:'原导购已离职 · 70 天未联系',tags:['老客'],spend:'¥2,780'},
+ c18:{n:'彭宇',o:'无归属',i:4,bound:1,opp:'',r:'扫码进入 · 从未被分配',tags:['新客'],spend:'¥0'},
+ c12:{n:'何娜',o:'张凯',i:5,bound:1,opp:'',r:'35 天未联系',tags:['老客'],spend:'¥3,050'}};
+const STAFF={'林悦':{today:[12,80,0],week:[46,88,1],month:[168,90,2],u:3},'张凯':{today:[2,25,2],week:[9,41,5],month:[52,52,9],u:8},'陈小雨':{today:[8,60,1],week:[33,70,2],month:[131,74,4],u:6},'王浩':{today:[6,50,1],week:[28,64,3],month:[110,68,5],u:7}};
+const UNF=[['未完成的跟进任务',[['c5','跟进任务 · 逾期 2 天'],['c6','跟进任务 · 今天到期']]],['未处理的机会',[['c7','高意向 · 近 3 天看款 4 次，加购未买'],['c8','复购 · 上次购买已 45 天'],['c9','上新到货 · 看过同风格 2 次']]],['久未联系',[['c10','62 天未联系'],['c11','48 天未联系'],['c12','35 天未联系']]]];
+const REC=[['c2','买过同品类 · 上次购买已 52 天'],['c1','看过同风格 4 次'],['c3','偏好驼色系'],['c8','买过同品类 · 上次购买已 45 天'],['c9','看过同风格 2 次'],['c5','上次购买超过 80 天']];
+const TASKS=[
+ {t:'发圈',name:'秋冬新品朋友圈',sub:'8 人执行 · 今天截止',p:[5,8],m:[5,'—',42,6,'¥8,640']},
+ {t:'群发',name:'羊毛大衣上新 · 老客群发',sub:'4 人执行 · 半自动发送',p:[3,4],m:[96,81,23,4,'¥5,280']},
+ {t:'跟进',name:'高意向客户跟进',sub:'机会来源：高意向 · 自动创建 · 共 20 位客户 · 3 人执行',p:[12,20],m:[12,12,9,3,'¥2,980']}];
+const TASKS0=TASKS.slice();
+const ORPH=['c14','c15','c16','c17','c18'];
+const ODT=[['张凯','高意向客户跟进','5 位客户','逾期 3 天'],['张凯','流失召回跟进','3 位客户','逾期 2 天'],['王浩','上新到货群发','4 位客户','逾期 2 天'],['陈小雨','高意向客户跟进','2 位客户','逾期 1 天'],['王浩','节点关怀跟进','1 位客户','逾期 1 天'],['林悦','复购跟进','1 位客户','逾期 1 天']];
+const DIST={生命周期:[['未成交',1168,'+3%'],['新客',386,'-34%'],['老客',4102,'+16%'],['预流失',302,'+75%'],['流失',1201,'+1%']],客户价值:[['高价值',820,'+8%'],['中价值',2960,'+2%'],['低价值',4862,'-1%']],客户渠道:[['小程序',4210,'+9%'],['扫码',2630,'+4%'],['导入',1802,'0%']],所属导购:[['林悦',2640,'+3%'],['陈小雨',2310,'+5%'],['王浩',2105,'+2%'],['张凯',1587,'-6%']],商品偏好:[['连衣裙',2100,'+6%'],['风衣',1620,'+12%'],['针织',1480,'+4%']]};
+const st={dist:'生命周期',gsel:{},rsel:{A102:1,C201:1,B015:1,D088:1,E033:1},scen:null,done:{},cur:'overview',hist:[],seg:'mine',per:'today',ptab:'perf',pper:'week',oppf:'全部',cf:'全部',batch:false,sel:{},kb:'search',sent:false,sentSet:0,chat:'c1',msg:'',remind:'明天 10:00 跟进',rnote:'',rd:'后天 10:00',fdone:{},due:0,urged:{},alay:null,aemp:null,need:{风格:'通勤',尺码:'M',预算:'500-1000'},color:null,fromChat:false,pprod:null,psel:{},pm:'all',pmt:'all',dtab:'全部',oid:'o1',sort:{},atype:'跟进',amode:'own',ttype:'跟进',ttab:'我执行',tf:'全部',uSel:{},uBatch:false,auto:{高意向:1,'复购与关联':1,上新到货:0,节点关怀:1,流失召回:0}};
+const SCEN={
+S1:{star:1,title:'S1 导购：新客接待',short:'新客第一次看款，快速建档、推荐商品',goal:'新客林小夏第一次来看款并在微信里问话。快速建档、记下她的需求，再按需求推荐商品。',start:'chat',chat:'c13',steps:[
+ {k:'kbpick',t:'输入法识别出这是新朋友，点输入框上方“林小夏 · 新客，点此建档”',sel:'#kb-pick'},
+ {k:'create',t:'在“快速建档”里点选她说的需求（风格、尺码、预算），保存',sel:'#sheet-ok'},
+ {k:'kbgrid',t:'客户卡建好了，点“去推Ta喜欢”',sel:'#kb-togrid'},
+ {k:'gsel',t:'按需求推荐的款里，勾选 2~3 款',sel:'[data-act="gsel"]'},
+ {k:'sendset',t:'点“发合集”发给她，记入跟进记录',sel:'#sendset'}]},
+S2:{star:1,title:'S2 导购：跟进高意向客户',short:'反复看款、收藏未下单，主动推荐',goal:'王晓雯反复看款、收藏了没下单。从今日待办进入，用 AI 建议推荐商品促成成交。',start:'overview',steps:[
+ {k:'go:detail:c1',t:'今日待办里点“王晓雯”（高意向）',sel:'#todo-c1'},
+ {k:'recpage',t:'看 AI 建议，点“推荐款发给她”',sel:'#rec-btn'},
+ {k:'rsend',t:'确认勾选的款，点“发微信推荐”',sel:'#rsend'}]},
+S3:{star:1,title:'S3 导购：老客复购',short:'到了复购周期，推荐可能喜欢的新款',goal:'李婷上次购买已 52 天，到了复购周期。看系统给的理由，推荐她可能喜欢的新款。',start:'overview',steps:[
+ {k:'go:detail:c2',t:'今日待办里点“李婷”（复购与关联）',sel:'#todo-c2'},
+ {k:'recpage',t:'看复购理由，点“推荐款发给她”',sel:'#rec-btn'},
+ {k:'rsend',t:'确认勾选的款，点“发微信推荐”',sel:'#rsend'}]},
+S4:{title:'S4 导购：到货提醒',short:'客户想买的款补货了，主动提醒',goal:'陈佳怡之前收藏的款补货了，主动告诉她并推荐。',start:'overview',steps:[
+ {k:'go:detail:c3',t:'今日待办里点“陈佳怡”（上新到货）',sel:'#todo-c3'},
+ {k:'recpage',t:'看到货理由，点“推荐款发给她”',sel:'#rec-btn'},
+ {k:'rsend',t:'点“发微信推荐”，告诉她已补货',sel:'#rsend'}]},
+S5:{title:'S5 导购：客户关怀',short:'生日、久未购买，主动关怀维护关系',goal:'刘芳 3 天后生日。发一条关怀问候，可附生日券，不急着推商品。',start:'overview',steps:[
+ {k:'go:detail:c4',t:'今日待办里点“刘芳”（节点关怀）',sel:'#todo-c4'},
+ {k:'care',t:'点“发关怀问候”',sel:'#care-btn'},
+ {k:'carego',t:'确认话术和生日券，点“确认并去微信”',sel:'#sheet-ok'}]},
+S6:{star:1,title:'S6 导购：跟进提醒',short:'客户说“过两天再看看”，记录并到期提醒',goal:'王晓雯说“过两天再看看”。把需求记下来、设好提醒，到期后在今日待办里收到提醒。',start:'chat',chat:'c1',msg:'好看！我过两天再看看',steps:[
+ {k:'kbpick',t:'点输入框上方识别出的“王晓雯”',sel:'#kb-pick'},
+ {k:'remind',t:'客户卡里点“设提醒”',sel:'#kb-remind'},
+ {k:'save',t:'记下需求，选“后天 10:00”，点保存',sel:'#sheet-ok'},
+ {k:'ffwd',t:'点右侧“快进到后天”，模拟提醒到期',sel:'',btn:['ffwd','快进到后天']},
+ {k:'go:detail:c1',t:'今日待办出现“到期提醒”，点开王晓雯继续跟进',sel:'#todo-c1'}]},
+S7:{star:1,title:'S7 店长：分发跟进任务',short:'发现一批高意向或沉睡客户，分配给导购',goal:'在客户里筛出一批高意向客户，批量分给导购跟进。',start:'overview',steps:[
+ {k:'go:customers',t:'在经营概览的粉丝总览里点“客户总数”',sel:'#fans-total'},
+ {k:'cf:高意向',t:'筛选“高意向”（也可以筛“流失召回”找沉睡客户）',sel:'#cf-高意向'},
+ {k:'batch',t:'点右上角“批量”',sel:'#batch-btn'},
+ {k:'csel',t:'点“全选”或勾选几位客户',sel:'#csall'},
+ {k:'assign',t:'点“分配任务”',sel:'#assign'},
+ {k:'pub',t:'选任务类型；执行人选“按客户归属分配”或“指定员工”（选了才出现员工名单），点“确认发布”，到任务中心看到新任务',sel:'#sheet-ok'}]},
+S8:{star:1,title:'S8 店长：检查执行情况',short:'没人跟的客户、逾期的任务，及时催办',goal:'看哪些任务逾期了、哪些客户没人跟，逐项催办或重新分配。',start:'overview',steps:[
+ {k:'team',t:'在“今日待办”切到“团队待办”',sel:'#seg-team'},
+ {k:'od',t:'点“逾期任务”',sel:'#kpi-od'},
+ {k:'urge',t:'点第一条的“催办”（也可以一键催办）',sel:'#urge-0'},
+ {k:'orph',t:'返回，点“无人跟进的客户”',sel:'#kpi-orph'},
+ {k:'orphopen',t:'点“分配给导购”',sel:'#orph-assign'},
+ {k:'orphdone',t:'选导购，点“确认分配”',sel:'#sheet-ok'}]},
+S9:{title:'S9 老板：经营复盘',short:'哪些机会带来成交、哪些导购跟进有效',goal:'复盘一段时间的跟进效果：哪类机会成交多、哪位导购有效，并去基础设置调整。',start:'overview',steps:[
+ {k:'go:analysis',t:'在经营概览“跟进效果”点“复盘 ›”',sel:'#to-ana'},
+ {k:'sort:lay',t:'在“分层跟进效果”点“转化率”表头排序，看哪类机会转化最高',sel:'#th-lay-4'},
+ {k:'alay',t:'点“上新到货”，看它的成交贡献',sel:'#lay-上新到货'},
+ {k:'aemp',t:'在“员工跟进分析”点“王浩”，看他的成交',sel:'#emp-王浩'},
+ {k:'go:settings',t:'在结论里点“去调整 ›”，到基础设置调整召回规则',sel:'#adj'}]},
+X1:{title:'补充 · 键盘查上次买的款',short:'客户问“还有别的颜色吗”',goal:'客户在微信问“我上次买的那件还有别的颜色吗？”，找到她、打开她的衣橱、看她买过的款，告诉她有哪些颜色。',start:'chat',chat:'c1',steps:[
+ {k:'kbpick',t:'在微信聊天里打开输入法，点输入框上方识别出的“王晓雯”',sel:'#kb-pick'},
+ {k:'wardrobe',t:'客户卡里点“她的衣橱”（在发卡券后面）',sel:'#kb-wardrobe'},
+ {k:'wprod',t:'“买过的”里点那件风衣，看颜色与库存',sel:'#w-coat'},
+ {k:'color',t:'商品页看各颜色库存，选一个有货的颜色',sel:'#colors .opt:not(.out)'},
+ {k:'send',t:'点“发送给客户”，回到聊天',sel:'#p-send'}]},
+X2:{title:'补充 · 上新推给老客',short:'挑一款推给可能喜欢的人',goal:'上游刚上了一款新衣服，挑一款推给可能喜欢的老客，走到“去微信”前的确认就算完成。',start:'overview',steps:[
+ {k:'push',t:'在经营概览点“推上新”',sel:'#qa-push'},
+ {k:'aud',t:'在“推送上新”页点“推送对象”（全部 / 推荐感兴趣的人 / 指定）',sel:'#aud'},
+ {k:'pmsel:rec',t:'选“推荐感兴趣的人”',sel:'#pm-rec'},
+ {k:'pmrec',t:'点“确定”，进入推荐客户列表',sel:'#sheet-ok'},
+ {k:'tick',t:'看每位客户的推荐理由，勾选要推的人',sel:'#selall'},
+ {k:'gen',t:'点“确定”回到推送页',sel:'#gen'},
+ {k:'send',t:'点“立即推送”，进入任务确认',sel:'#send0'},
+ {k:'confirm',t:'确认后点“确认并去微信”',sel:'#confirm'}]},
+X3:{title:'补充 · 谁跟进最少',short:'按导购看未跟进客户',goal:'找出这周跟进最少的导购，看看他还有哪些客户没跟进。',start:'overview',steps:[
+ {k:'team',t:'在“今日待办”切到“团队待办”',sel:'#seg-team'},
+ {k:'week',t:'时间选“本周”，跟进最少的排在最前',sel:'#per-week'},
+ {k:'emp',t:'点排在最前的员工',sel:'#team tr.click'},
+ {k:'act',t:'对未跟进客户“一键提醒”，或勾选后“批量重新分配”',sel:'#remind'}]}};
+const PAGES=[
+ ['overview','经营概览','mod','我的 → 粉丝','参考新版“客户经营”：今日待办直接列出待跟进客户，可切我的待办 / 团队待办；下面是粉丝总览、跟进效果、客户分布、转化漏斗。模块是否展示沿用员工现有权限。','6、7B、10、14'],
+ ['customers','客户列表','mod','好友页 → 粉丝与客户','原“粉丝与客户”。新增机会筛选、机会提示、批量分配任务。右上“今日机会 / 待办”替代原“等你推上新”。','6、11'],
+ ['detail','客户详情','mod','客户列表 / 机会清单 / 键盘','按“客户 360”还原，现有功能全部保留（余额、积分、优惠券、开单、对账、归属、权限、完整档案）。新增 AI 建议卡；“最近动态”可按类型切换，商品名可点进商品详情，最近下单放在“交易”里、点进订单详情；粉丝与客户合并，“去邀请”是一个操作。','8、9'],
+ ['tasks','任务中心','mod','工作台 → 我的待办','原只有发圈，现并入群发、跟进。自动创建的开关在基础设置里按机会类型设置。','10、12'],
+ ['perf','员工业绩','mod','原入口','现有业绩不变，新增“任务”页签与“本周”。团队跟进统计并入这里。','15'],
+ ['analysis','跟进效果复盘','new','经营概览 → 跟进效果 → 复盘','跟进闭环、员工跟进分析、分层跟进效果、话术效果排行、结论与建议。与“经营数据”分开，不改经营数据。','16'],
+ ['settings','基础设置','new','经营概览 / 我的','机会规则、自动建任务开关、分层口径、话术与标签。员工与权限沿用现有。','17'],
+ ['chat','键盘面板','mod','微信聊天 → 微购键盘','按现有输入法还原：输入客户名后上方出现识别条，点开是客户卡（跟进提醒、开单/发订单/余额/发卡券）；点右上角悬浮图标进工作台，“今日跟进客户”进待跟进列表。新增：AI 建议、去推Ta喜欢，以及“发卡券”后面的“她的衣橱”入口。','7、7A、9']];
+const NOTES={wardrobe:['她的衣橱','new','键盘客户卡里“发卡券”之后新增的入口。上面是她买过的，下面是她感兴趣的（看过、加购、收藏）；点商品进商品详情。以后其他“她的”维度（尺码、搭配）也放这里，不再往客户卡上加入口。','7A'],order:['订单详情','old','现有订单详情。客户详情“最近动态 → 交易”里点“订单详情”进入；新增“成交归因”一行，说明这单是否来自跟进任务。','8、9'],overdue:['逾期任务','new','团队视图点“逾期任务”进入：谁的哪个任务逾期了、逾期几天，可单个或一键催办。','14'],rec:['推荐商品','new','客户详情 AI 建议卡点“推荐款发给她”进入：AI 话术、最近看过、相似款，勾选后发微信推荐。','7'],opplist:['机会清单','new','今日机会点进来，按优先级排序，每位客户带一句理由。','6'],team:['未跟进客户','new','团队视图点员工后进入。包含未完成的跟进任务、未处理的机会、久未联系三类。','14'],product:['商品页','old','现有商品页，新增“推给合适的客户”入口，键盘“最近购买”点进来能看各颜色库存。','7A、7B'],pushpick:['推送上新','mod','沿用现有“推送上新”页，只改一处：把“谁可以看”和“推送对象”合并成一项“推送对象”，三选一：全部 / 推荐感兴趣的人 / 指定。','7B'],pushcust:['选择客户','new','“推荐感兴趣的人”：系统按偏好推荐老客，每位带理由；“指定”：从全部客户里手动挑。勾选后确定，回到推送页。','7B'],pushconfirm:['确认任务','new','确认类型、客户、商品，之后进入现有半自动发送。','7B']};
+const hd=(t,o={})=>`<div class="hd ${o.left?'left':''}">${o.back===false?'<span class="bk"></span>':'<button class="bk" data-act="back" aria-label="返回">‹</button>'}<div class="t">${t}</div><div class="r">${o.r||''}</div></div>`;
+const lab=(t,c='n')=>`<span class="lab ${c}">${t}</span>`;
+const go=(id)=>({'data-go':id});
+const sorted=()=>Object.entries(STAFF).sort((a,b)=>a[1][st.per][0]-b[1][st.per][0]);
+const perName={today:'今日',week:'本周',month:'本月'};
+const CHAT={c1:{n:'王晓雯',ch:'王',i:0,msg:'我上次买的那件还有别的颜色吗？',labs:'<span class="lab o" style="font-weight:700">V2</span><span class="lab o">高意向</span><span class="lab n">零售</span>',stat:'近 3 天看款 5 次 · 总消费 ¥3,860 · 订单 12'},
+ c13:{n:'林小夏',ch:'林',i:5,nw:1,msg:'你好，这件风衣有货吗？',labs:'<span class="lab g">新客</span><span class="lab n">零售</span>',stat:'今天首次看款 3 次 · 暂无订单'}};
+function oppCounts(){return [['高意向',6],['复购与关联',4],['上新到货',3],['节点关怀',3],['流失召回',2]]}
+
+function vOverview(){
+ const team=st.seg==='team';
+ const rows=sorted().map(([n,d],i)=>`<tr class="click" data-act="emp" data-arg="${n}"><td><b>${n}</b> ${i===0?lab('最少','r'):''}</td><td>${d[st.per][0]}</td><td style="color:var(--org);font-weight:600">${d.u}</td><td>${d[st.per][1]}%</td><td>${d[st.per][2]}</td></tr>`).join('');
+ const nd=Object.values(st.fdone).filter(Boolean).length;
+ const mine=['c1','c2','c3','c4'].map(k=>{const c=C[k],dn=st.fdone[k],due=st.due&&k==='c1';const why=due?'跟进提醒：'+(st.rnote||'客户说过两天再看看'):c.r;return `<div class="row click" id="todo-${k}" data-go="detail:${k}" style="${dn?'opacity:.5':''}"><span style="width:7px;height:7px;border-radius:50%;background:${due?'var(--red)':'var(--org)'};flex:none"></span><div class="m" style="flex:1"><b style="font-size:16px">${c.n}</b> ${dn?lab('已跟进','g'):due?lab('到期提醒','r'):lab(c.opp,c.oc)}<div style="white-space:normal">${why}</div></div><button class="btn sm" style="background:var(--g2);color:#07934B;font-weight:500">${dn?'已处理':'去跟进 ›'}</button></div>`}).join('');
+ const D=DIST[st.dist];
+ const mx=Math.max(...D.map(x=>x[1]));
+ return hd('经营概览',{back:false,r:'<span class="link" data-go="settings">设置</span>'})+`<div class="body">
+ <div class="card"><div class="ch"><b style="font-size:17px">今日待办</b></div>
+  <div class="chips" style="margin-bottom:6px"><span class="chip ${team?'':'on'}" id="seg-mine" data-act="seg" data-arg="mine" style="height:32px">我的待办 ${7-nd}</span><span class="chip ${team?'on':''}" id="seg-team" data-act="seg" data-arg="team" style="height:32px">团队待办 23 <span class="lab b" style="margin-left:6px">店长</span></span></div>
+  ${team?`<div class="chips" style="margin:8px 0">${['today','week','month'].map(p=>`<span class="chip ${st.per===p?'on':''}" id="per-${p}" data-act="per" data-arg="${p}">${perName[p]}</span>`).join('')}</div>
+  <div class="grid g2" style="margin:8px 0"><div id="kpi-od" data-act="od" style="background:#FFF3E5;border-radius:10px;padding:10px 12px;cursor:pointer"><b style="font-size:21px;color:var(--org)">${ODT.length}</b><div class="sm mut">逾期任务 ›</div></div><div id="kpi-orph" data-act="orph" style="background:#FDECEC;border-radius:10px;padding:10px 12px;cursor:pointer"><b style="font-size:21px;color:var(--red)">${ORPH.length}</b><div class="sm mut">无人跟进的客户 ›</div></div></div>
+  <table class="t" id="team"><tr><th>员工</th><th>跟进客户</th><th>未跟进</th><th>完成率</th><th>逾期</th></tr>${rows}</table>
+  <div class="sm mut" style="margin-top:8px">按跟进客户数从少到多排序，点员工看他的未跟进客户</div>`:`${mine}<div class="link" style="text-align:center;padding:12px 0 2px" data-go="tasks">查看全部 7 条待办 ›</div>`}</div>
+ <div class="card"><div class="ch"><b style="font-size:17px">粉丝总览</b></div><div class="grid g3"><div class="stat" data-go="customers"><b>36</b><span>昨日新增 ›</span></div><div class="stat" data-go="customers"><b>386</b><span>本月新增 ›</span></div><div class="stat" id="fans-total" data-go="customers"><b>8,642</b><span>客户总数 ›</span></div></div>
+  <div class="grid g3" style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px;text-align:center"><span data-act="toast" data-arg="访客足迹【已有】" style="cursor:pointer">访客足迹</span><span id="qa-push" data-act="push" style="cursor:pointer;color:#C66A0C;font-weight:600">推上新</span><span data-go="tasks" style="cursor:pointer">任务中心</span></div></div>
+ <div class="card"><div class="ch"><b style="font-size:17px">跟进效果</b><span class="link" id="to-ana" data-go="analysis">复盘 ›</span></div>
+  <div class="grid g2"><div style="background:#F8FAF9;border-radius:10px;padding:12px"><b style="font-size:22px">¥86.4万</b><div class="sm mut">影响交易金额</div></div><div style="background:#F8FAF9;border-radius:10px;padding:12px"><b style="font-size:22px">23.2%</b><div class="sm mut">机会 → 成交转化</div><div class="dl up">↑3.1%</div></div></div></div>
+ <div class="card"><div class="ch"><b style="font-size:17px">客户分布</b><span class="sm mut">较上月</span></div>
+  <div class="chips" style="margin-bottom:10px">${Object.keys(DIST).map(k=>`<span class="chip ${st.dist===k?'on':''}" data-act="dist" data-arg="${k}">${k}</span>`).join('')}</div>
+  ${D.map(([n,v,d])=>`<div class="fun" style="margin:10px 0"><span class="n" style="width:62px;font-size:14px">${n}</span><div class="bar" style="height:14px"><i style="width:${v/mx*100}%;background:#9DE0BE"></i></div><span style="width:46px;text-align:right;font-weight:600">${v.toLocaleString()}</span><span class="dl" style="width:44px;text-align:right;color:${d[0]==='-'?'#07934B':'var(--red)'}">${d}</span></div>`).join('')}
+  <div class="sm mut">生命周期按最近消费与历史消费自动判定 <span class="link" data-go="settings">设置 ›</span></div></div>
+ <div class="card"><div class="ch"><b style="font-size:17px">转化漏斗</b><span class="link" data-go="analysis">查看完整漏斗 ›</span></div><div class="sm mut" style="margin-bottom:8px">近 30 天 · 全量客户</div>
+  ${[['浏览','6,842','100.0%',100],['加购/收藏','3,421','50.0%',50],['下单','1,595','23.3%',23],['支付','1,024','15.0%',15]].map(f=>`<div class="fun"><span class="n" style="width:70px">${f[0]}</span><div class="bar" style="height:18px"><i style="width:${f[3]}%"></i></div><b style="width:50px;text-align:right">${f[1]}</b><span class="mut" style="width:46px;text-align:right;font-size:11px">${f[2]}</span></div>`).join('')}</div>
+ </div>
+ <div class="foot" style="justify-content:space-around;padding:6px 0;font-size:11px;color:var(--mut)">${['相册动态','客户','工作台','消息','我'].map((t,i)=>`<div style="text-align:center;color:${i===1?'var(--g)':'inherit'}"><div style="width:22px;height:22px;border-radius:6px;border:2px solid currentColor;margin:0 auto 2px"></div>${t}</div>`).join('')}</div>`;
+}
+function vOpp(){
+ const fs=['全部',...oppCounts().map(o=>o[0])];
+ const list=Object.entries(C).filter(([k,c])=>c.opp&&(st.oppf==='全部'||c.opp===st.oppf));
+ return hd('今日机会')+`<div class="body"><div class="chips" style="margin-bottom:10px">${fs.map(f=>`<span class="chip ${st.oppf===f?'on':''}" data-act="opp" data-arg="${f}">${f}</span>`).join('')}</div>
+ <div class="card">${list.length?list.map(([k,c])=>`<div class="row click" data-go="detail:${k}">${av(c.n,c.i)}<div class="m"><b>${c.n}</b> ${lab(c.opp,c.oc)}<div style="white-space:normal">${c.r}</div></div><button class="btn sm sec" data-act="stop" data-go="detail:${k}">跟进</button></div>`).join(''):'<div class="mut" style="padding:20px;text-align:center">这一类今天没有机会</div>'}</div>
+ <div class="sm mut" style="text-align:center">按优先级排序 · AI 只依据访客行为和交易数据</div></div>`;
+}
+function vTeam(){
+ const n='张凯',ids=UNF.flatMap(g=>g[1].map(x=>x[0]));
+ const body=UNF.map(([g,items])=>`<div class="card"><div class="ch"><b style="font-size:14px">${g} <span class="mut" style="font-weight:400">${items.length}</span></b></div>${items.map(([k,why])=>{const c=C[k];return `<div class="row">${st.uBatch?`<span class="cb ${st.uSel[k]?'on':''}" data-act="usel" data-arg="${k}">${st.uSel[k]?'✓':''}</span>`:''}${av(c.n,c.i,36)}<div class="m click" data-go="detail:${k}"><b style="font-size:14px">${c.n}</b><div>${why}</div></div><span class="link" data-act="reassign" data-arg="${k}">转派</span></div>`}).join('')}</div>`).join('');
+ const nsel=Object.values(st.uSel).filter(Boolean).length;
+ return hd('张凯 · 未跟进客户',{r:`<span class="link" data-act="ubatch">${st.uBatch?'取消':'批量'}</span>`})+`<div class="body">
+ <div class="card" style="display:flex;gap:12px;align-items:center">${av(n,0)}<div style="flex:1"><b>张凯</b><div class="sm mut">本周跟进 9 位 · 完成率 41% · 逾期 5</div></div><div style="text-align:right"><b style="color:var(--org);font-size:22px">8</b><div class="sm mut">未跟进</div></div></div>
+ <div class="sm mut" style="margin:0 2px 8px">未跟进 = 未完成的跟进任务 + 未处理的机会 + 久未联系</div>${body}</div>
+ <div class="foot">${st.uBatch?`<button class="btn block ${nsel?'':'disabled'}" data-act="reassign" data-arg="batch">批量重新分配${nsel?`（${nsel}）`:''}</button>`:`<button class="btn block" id="remind" data-act="remind">一键提醒张凯（8 位）</button>`}</div>`;
+}
+function custList(){return Object.entries(C).filter(([k,c])=>st.cf==='全部'||c.opp===st.cf||(st.cf==='会员'&&c.tags.includes('会员'))||(st.cf==='成交客户'&&c.spend!=='¥0')||(st.cf==='无人跟进'&&c.o==='无归属'))}
+function vCustomers(){
+ const fs=['全部','会员','成交客户','高意向','复购与关联','上新到货','节点关怀','流失召回','无人跟进'];
+ const list=custList();
+ const n=Object.values(st.sel).filter(Boolean).length;
+ return hd('粉丝与客户',{r:`<span class="link" id="batch-btn" data-act="batch">${st.batch?'取消':'批量'}</span>`})+`<div class="body">
+ <div class="card" style="display:flex;gap:10px;align-items:center;padding:10px 14px"><input class="in" placeholder="搜索昵称、手机号、备注" style="flex:1"><span class="lab o" style="line-height:26px;padding:0 8px;cursor:pointer" data-act="opp" data-arg="全部">今日待办 7</span></div>
+ <div class="card" style="padding:12px 4px"><div class="grid g4"><div class="qa" data-act="toast" data-arg="新建客户（含截图识别）"><div class="sq">+</div>新建</div><div class="qa" data-act="toast" data-arg="批量导入【已有】"><div class="sq">入</div>导入</div><div class="qa" data-act="toast" data-arg="手动合并【已有】"><div class="sq">合</div>合并</div><div class="qa" data-act="toast" data-arg="更改归属【已有】"><div class="sq">归</div>更改归属</div></div></div>
+ <div class="chips" style="margin-bottom:10px">${fs.map(f=>`<span class="chip ${st.cf===f?'on':''}" id="cf-${f}" data-act="cf" data-arg="${f}">${f}</span>`).join('')}</div>
+ ${st.cf==='无人跟进'&&list.length?`<div class="card" style="background:#FDECEC"><b style="font-size:14px">${list.length} 位客户没有归属导购</b><div class="sm mut" style="margin:4px 0 8px">原导购离职或扫码后未分配，系统不会给他们建任务</div><button class="btn sm" id="orph-assign" data-act="orphopen">分配给导购</button></div>`:''}<div class="card">${list.length?'':'<div class="mut" style="padding:20px;text-align:center">没有符合的客户</div>'}${list.map(([k,c])=>`<div class="row click" ${st.batch?`data-act="sel" data-arg="${k}"`:`data-go="detail:${k}"`}>${st.batch?`<span class="cb ${st.sel[k]?'on':''}">${st.sel[k]?'✓':''}</span>`:''}${av(c.n,c.i)}<div class="m"><b>${c.n}</b> ${c.bound?lab('已绑定','g'):lab('未绑定')} ${c.opp?lab(c.opp,c.oc):''}<div>${c.r} · ${c.o}</div></div></div>`).join('')}</div></div>
+ ${st.batch?`<div class="foot"><span class="link" id="csall" data-act="csall">全选</span><span class="mut sm" style="margin-left:10px">已选 ${n} 位</span><span style="flex:1"></span><button class="btn ${n?'':'disabled'}" id="assign" data-act="assign">分配任务</button></div>`:''}`;
+}
+function vDetail(){
+ const k=st.cid||'c1',c=C[k],first=k==='c1';
+ const pl=n=>`<span class="link" style="font-size:inherit" data-act="prod" data-arg="${n}">「${n}」</span>`,ol=(o)=>`<span class="link" style="white-space:nowrap" data-act="order" data-arg="${o}">订单详情 ›</span>`,buyer=c.spend!=='¥0';
+ const fs=(src,res,ok)=>`<div class="sm mut" style="margin-top:3px">${src} · ${lab(res,ok?'g':'n')}</div>`;
+ const ALL=[['跟进','半小时前','销售'+c.o+'完成微信跟进'],['商品行为','4 小时前','重复查看'+pl('春季风衣')+'第 3 次'],['商品行为','19 小时前','加购 2 款：'+pl('春季风衣')+'、'+pl('驼色羊绒针织开衫')+'，尚未下单'],
+  ...(buyer?[['交易','3 天前','完成订单 ¥680 · '+pl('连衣裙')+' ×1 '+ol('o1')]]:[]),['活动','5 天前','参与「秋季上新」活动，领取优惠券 1 张'],['跟进','6 天前',c.o+' 已报价，考虑中'+fs('来自「高意向」跟进任务',buyer?'成交结果：3 天后下单 ¥680':'成交结果：暂无',buyer)],['转介绍','12 天前','转介绍客户「李女士」完成首单'],['跟进','19 天前',c.o+' 推了新款针织，已读未回'+fs('手动记录','成交结果：暂无',0)],
+  ...(buyer?[['交易','52 天前','完成订单 ¥899 · '+pl('经典双排扣风衣')+' 米白 M ×1 '+ol('o2')]]:[])];
+ const tl=(st.dtab==='全部'?ALL.slice(0,5):ALL.filter(x=>x[0]===st.dtab)).map(x=>[x[1],x[2]]);
+ return hd('客户 360')+`<div class="body">
+ <div class="card"><div style="display:flex;gap:14px"><div style="text-align:center">${av(c.n,c.i,70)}<div class="lab n" style="margin-top:4px">${9000+k.length*131}</div></div><div style="flex:1"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><b style="font-size:20px">${c.n}</b><span class="lab o" style="font-weight:700">V2</span><span class="lab n">复制</span>${c.bound?'':`<button class="btn sm sec" data-act="toast" data-arg="已发送邀请，客户授权后合并身份">去邀请</button>`}</div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${lab('余额¥1308.00')} ${lab('积分 9088')} ${lab('优惠券 2 张')} ${c.tags.map(t=>lab(t)).join(' ')} ${lab('生日 12-25','o')}</div></div></div>
+  <div class="grid g3" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);text-align:center"><div><div class="sm mut">累计消费(元)</div><b style="font-size:17px">${c.spend}</b></div><div><div class="sm mut">累计下单(次)</div><b style="font-size:17px">${first?123:23}</b></div><div><div class="sm mut">上次购买</div><b style="font-size:17px">${first?'52 天前':'45 天前'}</b></div></div></div>
+ <div class="card" style="padding:0;overflow:hidden"><div style="background:var(--g2);display:flex;justify-content:space-between;padding:10px 14px"><b style="color:#07934B;font-size:16px">AI 建议</b><span class="mut">为什么</span></div>
+  <div style="padding:10px 14px 14px"><div style="margin-bottom:12px">${c.opp?`${lab(c.opp,c.oc)} ${c.r}。${({高意向:'建议今天跟进，直接发报价并搭配内搭，成交概率较高。',复购与关联:'已到复购周期，建议推荐同品类新款，附一句换季问候。',上新到货:'建议告诉她已补货，问是否帮她留一件。',节点关怀:'建议发一句生日祝福，可附一张生日券，先不急着推商品。',流失召回:'建议先发关怀问候，再用一张券唤醒。'})[c.opp]}`:c.r+'，建议发一条问候，带上近期新品。'}</div>
+  <div style="display:flex;gap:8px"><button class="btn grey block" data-act="assign1">建跟进任务</button>${['节点关怀','流失召回',''].includes(c.opp)?`<button class="btn block" id="care-btn" data-act="care">发关怀问候</button>`:`<button class="btn block" id="rec-btn" data-act="recpage">推荐款发给她</button>`}</div></div></div>
+ <div class="card"><div class="ch"><b style="font-size:16px">最近动态</b><span class="link" data-act="toast" data-arg="粉丝数据">粉丝数据</span></div>
+  <div class="chips" id="dtabs" style="margin-bottom:10px;gap:16px;overflow-x:auto;flex-wrap:nowrap">${['全部','商品行为','交易','跟进','活动','转介绍'].map(t=>`<span id="dt-${t}" data-act="dtab" data-arg="${t}" style="white-space:nowrap;cursor:pointer;padding-bottom:4px;color:${st.dtab===t?'var(--ink)':'var(--mut)'};font-weight:${st.dtab===t?600:400};border-bottom:2px solid ${st.dtab===t?'var(--g)':'transparent'}">${t}</span>`).join('')}</div>
+  ${tl.length?tl.map(([t,s])=>`<div style="display:flex;gap:10px;padding:9px 0;font-size:14px;line-height:1.5"><span style="width:8px;height:8px;border-radius:50%;background:var(--g);margin-top:7px;flex:none"></span><span class="mut" style="width:62px;flex:none">${t}</span><span style="flex:1">${s}</span></div>`).join(''):'<div class="mut" style="text-align:center;padding:18px 0">暂无'+st.dtab+'记录</div>'}
+  <div class="link" style="text-align:center;border-top:1px solid var(--line);padding-top:10px" data-act="toast" data-arg="${st.dtab==='交易'?'全部订单':'全部动态'}">${st.dtab==='交易'?'全部订单':'全部动态'} ›</div></div>
+ <div class="card"><div class="ch"><b style="font-size:16px">归属信息</b></div>${[['客户渠道',first?'分享小程序':'小程序注册'],['由谁带来','小周 · 2024-03-18 首单'],['当前归属',c.o+' · 上海静安店'],['归属时间','2024-03-18']].map(r=>`<div class="fld" style="padding:9px 0"><span class="mut" style="flex:1;width:auto">${r[0]}</span><span>${r[1]}</span></div>`).join('')}<div class="link" style="text-align:right;padding-top:8px" data-act="toast" data-arg="更改归属【已有】">更改归属</div></div>
+ <div class="card"><div class="ch"><b style="font-size:16px">粉丝权限</b></div><div class="fld" style="border:0;padding:4px 0"><span class="mut" style="flex:1;width:auto">当前设置</span><b>相册可见</b></div></div>
+ <div class="card" style="display:flex"><span class="mut">完整档案</span><span style="flex:1"></span><span class="link">生日 · 地址 · 亲属 · 转介绍 ›</span></div></div>
+ <div class="foot"><button class="btn grey block" style="padding:0 6px" data-act="toast" data-arg="加余额【已有】">加余额</button><button class="btn grey block" style="padding:0 6px" data-act="toast" data-arg="减余额【已有】">减余额</button><button class="btn grey block" style="padding:0 6px" data-act="toast" data-arg="对账【已有】">对账</button><button class="btn block" style="padding:0 6px" data-act="toast" data-arg="开单【已有】">开单</button></div>`;
+}
+function vRec(){
+ const P={A102:['#C4A583','#A98A66'],C201:['#AA8860','#8A6A40'],B015:['#E7E0D3','#CFC6B4'],D088:['#3A3A3E','#26262A'],E033:['#506788','#3A4E6C'],C305:['#C4B898','#A89A78'],F012:['#EFEDE8','#DAD6CC'],G220:['#D6C6B0','#BBA98E'],H118:['#9FA9AF','#7E8A92']};
+ const sec=(t,items)=>`<div style="font-weight:700;font-size:15px;margin:14px 0 8px">${t}</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${items.map(([c,tag,price,beh,col])=>{const on=st.rsel[c];return `<div data-act="rsel" data-arg="${c}" style="border-radius:10px;overflow:hidden;background:#fff;border:2px solid ${on?'var(--g)':'transparent'};cursor:pointer"><div style="height:92px;position:relative;background:linear-gradient(160deg,${P[c][0]},${P[c][1]});display:grid;place-items:center;color:rgba(0,0,0,.25);font-size:13px">${c}<span style="position:absolute;left:5px;top:5px;background:rgba(40,40,40,.6);color:#fff;font-size:10.5px;border-radius:9px;padding:0 7px;line-height:18px">${tag}</span><span class="cb ${on?'on':''}" style="position:absolute;right:5px;top:5px;width:20px;height:20px;border-color:#fff;background:${on?'':'rgba(255,255,255,.45)'}">${on?Object.keys(st.rsel).filter(x=>st.rsel[x]).indexOf(c)+1:''}</span></div><div style="padding:5px 7px 7px;font-size:12.5px">${c} ${price}<div style="margin-top:4px;font-size:11.5px;font-weight:600;color:${col}"><span style="color:#5CBF6F">●</span> ${beh}</div></div></div>`}).join('')}</div>`;
+ const n=Object.values(st.rsel).filter(Boolean).length;
+ const c0=C[st.cid||'c1'],nk=c0.n[0]+'姐',T=({高意向:[nk+'，新到了几款春季新品，我琢磨你的风格会喜欢，刚好有你的 M 码，配你衣柜里已有的就行，发你看看？',nk+'最近看过'],复购与关联:[nk+'，上次买完已经 52 天啦，换季了，新到的几款和你之前那件很搭，发你看看？',nk+'买过的同类'],上新到货:[nk+'，你收藏的驼色针织开衫补货啦，M 码有货，要不要帮你留一件？',nk+'收藏的款，已补货']})[c0.opp]||['','最近看过'];
+ return hd('推荐商品',{r:`<span class="link" data-act="toast" data-arg="刷新推荐">换一批</span>`})+`<div class="body" style="padding-top:10px"><div style="background:#EEF8F1;border:1px solid #D4EBDC;border-radius:10px;padding:10px 12px;font-size:13.5px;line-height:1.6"><b style="color:#2E9E4F">AI 推荐：</b>${T[0]} <span class="link" data-act="toast" data-arg="已复制话术">复制</span></div>
+ ${sec(T[1],[['A102','看 3 次','¥268','加购','#F29A2E'],['C201','看 2 次','¥598','收藏','#F29A2E'],['B015','看 1 次','¥189','看过','#9AA0A8']])}
+ ${sec('相似款推荐',[['D088','看 4 次','¥459','看过','#9AA0A8'],['E033','看 2 次','¥159','加购','#F29A2E'],['C305','推荐','¥529','推荐','#9AA0A8'],['F012','推荐','¥129','推荐','#9AA0A8'],['G220','买 2 次','¥368','买过','#2E9E4F'],['H118','看 1 次','¥258','看过','#9AA0A8']])}</div>
+ <div class="foot"><button class="btn grey" style="min-width:90px" data-act="rall">全选</button><button class="btn grey block" style="font-weight:600">已选 ${n} 款</button><button class="btn ${n?'':'disabled'}" style="flex:1.2" id="rsend" data-act="rsend">发微信推荐</button></div>`;
+}
+function vTasks(){
+ const l=TASKS.filter(t=>st.tf==='全部'||t.t===st.tf);
+ return hd('任务中心',{back:true})+`<div class="tabs">${['我执行','我创建','团队'].map(t=>`<button class="${st.ttab===t?'on':''}" data-act="ttab" data-arg="${t}">${t}</button>`).join('')}</div>
+ <div class="body"><div class="chips" style="margin-bottom:10px">${['全部','发圈','群发','跟进'].map(t=>`<span class="chip ${st.tf===t?'on':''}" data-act="tf" data-arg="${t}">${t}</span>`).join('')}</div>
+ ${l.map(t=>`<div class="card"><div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">${lab(t.t,t.t==='发圈'?'b':'g')}<b>${t.name}</b></div><div class="sm mut">${t.sub}</div>
+  <div style="display:flex;align-items:center;gap:10px;margin:10px 0"><div class="bar" style="flex:1"><i style="width:${t.p[0]/t.p[1]*100}%"></i></div><span class="sm">${t.p[0]} / ${t.p[1]}</span></div>
+  <div class="grid g5" style="text-align:center">${['已跟进','已触达','带来访客','下单','成交结果'].map((h,i)=>`<div><b style="font-size:14px">${t.m[i]}</b><div class="sm mut" style="font-size:11px">${h}</div></div>`).join('')}</div>
+  ${t.new?'<div class="sm" style="margin-top:8px;color:#07934B">刚创建 · 已进入你的待办</div>':''}</div>`).join('')}
+ <div class="sm mut" style="text-align:center;padding:4px">带来访客：客户从导购链接进入即计入，之后下单、成交记入同一任务</div></div>
+ <div class="foot"><button class="btn block" data-act="newtask">新建任务</button></div>`;
+}
+function vPerf(){
+ const T=st.ptab==='task';
+ const data=[['林悦',32800,41,46,88,1,9200],['陈小雨',27500,36,33,70,2,6100],['王浩',21300,30,28,64,3,4300],['张凯',12400,19,9,41,5,1800]];
+ return hd('员工业绩')+`<div class="tabs">${[['perf','业绩'],['task','任务']].map(([k,t])=>`<button class="${st.ptab===k?'on':''}" data-act="ptab" data-arg="${k}">${t}${k==='task'?' <span class="lab g">新</span>':''}</button>`).join('')}</div>
+ <div class="body"><div class="chips" style="margin-bottom:10px">${['今日','昨日','过去 7 日','本周','过去 30 日'].map(p=>`<span class="chip ${st.pper===p?'on':''}" data-act="pper" data-arg="${p}">${p}${p==='本周'?' ·新':''}</span>`).join('')}</div>
+ <div class="card">${T?`<table class="t"><tr><th>员工</th><th>跟进客户</th><th>完成率</th><th>逾期</th><th>任务成交</th></tr>${data.map(d=>`<tr class="click" data-act="emp" data-arg="${d[0]}"><td><b>${d[0]}</b></td><td>${d[3]}</td><td>${d[4]}%</td><td style="${d[5]>2?'color:var(--red)':''}">${d[5]}</td><td>¥${d[6].toLocaleString()}</td></tr>`).join('')}</table>
+ <div class="sm mut" style="margin-top:8px">点员工看明细，含与经营概览同一份的“未跟进客户”。团队跟进统计已并入这里。</div>`:`<table class="t"><tr><th>员工</th><th>成交额</th><th>单数</th></tr>${data.map(d=>`<tr><td><b>${d[0]}</b></td><td>¥${d[1].toLocaleString()}</td><td>${d[2]}</td></tr>`).join('')}</table><div class="sm mut" style="margin-top:8px">现有业绩数据，不改动</div>`}</div>
+ <div class="card row click" style="margin:0" data-act="toast" data-arg="离职交接【已有】"><div class="m"><b style="font-size:14px;font-weight:500">离职员工有 2 个客户待继承</b></div><span class="mut">›</span></div></div>`;
+}
+const EI={林悦:'林悦：跟进 412 位，响应率 58%，成交 102 位，转化 24.8%。高意向和复购跟进做得最扎实。',陈小雨:'陈小雨：跟进 386 位，响应率 56%，成交 96 位，转化 24.9%。节奏稳定。',王浩:'王浩：跟进 358 位，响应率 37%，成交 79 位，转化率 22.1%，但成交金额最高 ¥208,000（客单价约 ¥2,600）。适合多分配高价值客户。',张凯:'张凯：跟进只有 80 位，响应 20%，成交 10 位，转化 12.5%。需要店长介入，或把未跟进客户转派。'};
+const LI={高意向:'高意向：跟进 126 位，成交 22 位，转化 17.5%，金额 ¥48,600。客单价高，值得优先跟。',复购与关联:'复购与关联：跟进 342 位，成交 89 位，转化 26.0%，金额 ¥62,400。稳定的成交来源。',上新到货:'上新到货：跟进 613 位，成交 129 位，转化 21.0%，金额 ¥71,800，是成交最多的机会。建议保持“上新自动建任务”开启。',节点关怀:'节点关怀：跟进 158 位，成交 61 位，转化 38.6%，是转化率最高的机会。',流失召回:'流失召回：跟进 894 位，只成交 18 位，转化 2.0%。建议调整阈值或话术。'};
+function vAnalysis(){
+ const emp=[['林悦',412,240,102,148600],['陈小雨',386,216,96,126800],['王浩',358,132,79,208000],['张凯',80,16,10,18600]];
+ const lay=[['高意向',126,68,22,48600],['复购与关联',342,196,89,62400],['上新到货',613,382,129,71800],['节点关怀',158,96,61,28600],['流失召回',894,142,18,9200]];
+ const sc=[['看款未成交话术','58%','26%'],['新客欢迎话术','62%','21%'],['生日关怀话术','44%','19%'],['首单复购话术','51%','14%'],['流失召回话术','22%','6%']];
+ const cols=['跟进','响应','成交','转化率','金额'];
+ const mk=(key,rows)=>{const s=st.sort[key]||[-1,0],ci=s[0];
+  let r=rows.map(e=>[e[0],e[1],e[2],e[3],e[3]/e[1],e[4]]);
+  if(ci>0)r=r.slice().sort((a,b)=>(a[ci]-b[ci])*s[1]);
+  const head=`<tr><th>${key==='emp'?'员工':'分层'}</th>${cols.map((c,i)=>`<th id="th-${key}-${i+1}" data-act="sort" data-arg="${key}|${i+1}" style="cursor:pointer;white-space:nowrap;color:${ci===i+1?'var(--ink)':'var(--mut)'}">${c}<span style="font-size:9px;margin-left:1px">${ci===i+1?(s[1]>0?'▲':'▼'):'⇅'}</span></th>`).join('')}</tr>`;
+  return {head,r}};
+ const E=mk('emp',emp),L=mk('lay',lay),pc=v=>(v*100).toFixed(1)+'%';
+ return hd('跟进效果复盘',{r:'<span class="link" data-act="toast" data-arg="导出">导出</span>'})+`<div class="body"><div class="chips" style="margin-bottom:10px">${['本周','近 30 天','近 90 天','自定义 ▾'].map((p,i)=>`<span class="chip ${i===1?'on':''}" style="${i===1?'border:1.5px solid var(--g)':''}">${p}</span>`).join('')}</div>
+ <div class="card"><div class="ch"><b>跟进效果</b><span class="sm mut">10-19 ~ 11-18</span></div>
+  <div class="grid g2">${[['¥86.4万','影响交易金额'],['23.2%','机会 → 成交 ↑3.1%'],['65.6%','客户响应率'],['56.8%','成交客户复购率']].map(x=>`<div style="background:#F8FAF9;border-radius:10px;padding:12px"><b style="font-size:21px">${x[0]}</b><div class="sm mut">${x[1]}</div></div>`).join('')}</div></div>
+ <div class="card"><div class="ch"><b>员工跟进分析</b></div><table class="t" style="font-size:12.5px">${E.head}${E.r.map(e=>`<tr class="click" id="emp-${e[0]}" data-act="aemp" data-arg="${e[0]}" style="${st.aemp===e[0]?'background:var(--g2)':''}"><td>${e[0]}</td><td>${e[1]}</td><td>${e[2]}</td><td>${e[3]}</td><td ${e[4]<.15?'style="color:var(--red);font-weight:600"':''}>${pc(e[4])}</td><td>¥${e[5].toLocaleString()}</td></tr>`).join('')}</table>${st.aemp?`<div style="background:#F8FAF9;border-radius:8px;padding:10px;margin-top:8px;font-size:13px;line-height:1.6">${EI[st.aemp]}</div>`:'<div class="sm mut" style="margin-top:8px">点员工看他的跟进是否有效</div>'}</div>
+ <div class="card"><div class="ch"><b>分层跟进效果</b><span class="sm mut">按机会类型</span></div><table class="t" style="font-size:12.5px">${L.head}${L.r.map(e=>`<tr class="click" id="lay-${e[0]}" data-act="alay" data-arg="${e[0]}" style="${st.alay===e[0]?'background:var(--g2)':''}"><td>${e[0]}</td><td>${e[1]}</td><td>${e[2]}</td><td>${e[3]}</td><td ${e[4]<.05?'style="color:var(--red);font-weight:600"':''}>${pc(e[4])}</td><td>¥${e[5].toLocaleString()}</td></tr>`).join('')}</table>${st.alay?`<div style="background:#F8FAF9;border-radius:8px;padding:10px;margin-top:8px;font-size:13px;line-height:1.6">${LI[st.alay]}</div>`:'<div class="sm mut" style="margin-top:8px">点机会类型看它的成交贡献</div>'}</div>
+ <div class="card"><div class="ch"><b>话术效果排行</b><span class="link" data-go="settings">话术库 ›</span></div>${sc.map((s,i)=>`<div class="row" style="padding:9px 0"><span class="mut" style="width:14px">${i+1}</span><span style="flex:1">${s[0]}</span><b style="font-size:13px">响应 ${s[1]} · 成交 ${s[2]}</b></div>`).join('')}</div>
+ <div class="card"><div class="ch"><b>结论与建议</b><span class="sm mut">自动生成</span></div><div style="background:#F8FAF9;border-radius:10px;padding:12px;font-size:13px;color:#4E5969;line-height:1.7">1. 流失召回成交偏低（894 人跟进，仅成交 18），可到基础设置调整阈值或话术 <span class="link" id="adj" data-go="settings">去调整 ›</span><br>2. 上新到货贡献成交最多，建议保持“上新自动建任务”开启。<br>3. 张凯本月跟进量明显偏低，且有 8 位客户未跟进，建议本周内二次分配。</div></div></div>`;
+}
+function vSettings(){
+ const sw=(k)=>`<div class="sw ${st.auto[k]?'on':''}" data-act="auto" data-arg="${k}" role="switch" aria-checked="${!!st.auto[k]}" tabindex="0"></div>`;
+ const th1={高意向:'近 3 天看款 ≥ 3 次',复购与关联:'上次购买满 45 天',上新到货:'偏好匹配度 ≥ 中',节点关怀:'生日提前 3 天',流失召回:'超过 60 天未互动'};
+ return hd('基础设置')+`<div class="body"><div class="card"><div class="ch"><b>机会规则与自动建任务</b></div><div class="sm mut" style="margin-bottom:6px">机会是系统发现的值得跟进的客户。只有启用的类型才会生成跟进任务；未启用的只在客户上提示，不进待办。</div>
+ ${Object.keys(st.auto).map(k=>`<div class="row"><div class="m"><b style="font-size:14px">${k}</b><div>${th1[k]}</div></div><span class="sm mut">自动建任务</span>${sw(k)}</div>`).join('')}</div>
+ <div class="card"><div class="ch"><b>分层口径</b></div><div class="row"><div class="m"><b style="font-size:14px">预流失 / 流失</b><div>超过 45 天 / 90 天未互动</div></div><span class="link" data-act="toast" data-arg="修改天数">修改</span></div></div>
+ <div class="card"><div class="ch"><b>话术与标签</b></div><div class="row click" data-act="toast" data-arg="话术库"><div class="m"><b style="font-size:14px">话术库</b><div>按机会类型配置，AI 建议会参考</div></div><span class="mut">›</span></div><div class="row click" data-act="toast" data-arg="标签体系"><div class="m"><b style="font-size:14px">标签体系</b></div><span class="mut">›</span></div></div>
+ <div class="card"><div class="row"><div class="m"><b style="font-size:14px;font-weight:500">员工与权限、客户归属</b><div>沿用现有设置</div></div>${lab('已有','n')}</div></div></div>`;
+}
+function vOverdue(){
+ return hd('逾期任务')+`<div class="body"><div class="card" style="display:flex;align-items:center"><div style="flex:1"><b>${ODT.length} 项逾期</b><div class="sm mut">按逾期天数排序，点催办提醒执行人</div></div><button class="btn sm" id="urgeall" data-act="urgeall">一键催办</button></div>
+ <div class="card">${ODT.map((o,i)=>`<div class="row">${av(o[0],i,38)}<div class="m"><b>${o[0]}</b> ${lab(o[3],'r')}<div>${o[1]} · ${o[2]}</div></div><button class="btn sm ${st.urged[i]?'grey':'sec'}" id="urge-${i}" data-act="urge" data-arg="${i}">${st.urged[i]?'已催办':'催办'}</button></div>`).join('')}</div></div>`;
+}
+const ORD={o1:{no:'WG202611150028',t:'2026-11-15 14:32',s:'已完成',it:['连衣裙','杏色 S',680],attr:'来自「高意向」跟进任务（11-12 林悦报价后 3 天下单）'},o2:{no:'WG202609260116',t:'2026-09-26 11:08',s:'已完成',it:['经典双排扣风衣','米白 M',899],attr:'自然下单，无关联跟进任务'}};
+function vOrder(){
+ const o=ORD[st.oid]||ORD.o1,c=C[st.cid||'c1'],row=(a,b)=>`<div class="fld" style="padding:9px 0"><span class="mut" style="flex:1;width:auto">${a}</span><span style="text-align:right">${b}</span></div>`;
+ return hd('订单详情')+`<div class="body"><div class="card" style="display:flex;align-items:center"><b style="font-size:18px;flex:1">${o.s}</b><span class="sm mut">${c.n}</span></div>
+ <div class="card"><div class="ch"><b>商品</b></div><div class="row click" style="padding:0" data-act="prod" data-arg="${o.it[0]}">${th('#EADFCB','#C9B896')}<div class="m"><b class="link" style="font-size:15px">${o.it[0]}</b><div>${o.it[1]} · ×1</div></div><b>¥${o.it[2]}</b></div></div>
+ <div class="card">${row('订单编号',o.no)}${row('下单时间',o.t)}${row('实付金额','¥'+o.it[2])}${row('支付方式','微信支付')}${row('成交门店','上海静安店')}${row('导购',c.o)}</div>
+ <div class="card"><div class="ch"><b>成交归因</b></div><div style="font-size:13.5px;line-height:1.6">${o.attr}</div></div></div>
+ <div class="foot"><button class="btn grey block" data-act="toast" data-arg="再次购买【已有】">再次购买</button><button class="btn block" data-act="toast" data-arg="订单售后【已有】">售后</button></div>`;
+}
+function vWardrobe(){
+ const U=CHAT[st.chat||'c1'],c=C[st.chat||'c1'],buyer=c.spend!=='¥0';
+ const BUY=buyer?[['经典双排扣风衣','米白 M','2026-09-26 · ¥899',['#EADFCB','#C9B896'],'w-coat'],['连衣裙','杏色 S','2026-11-15 · ¥680',['#E3C9B8','#C79F88'],'w-dress']]:[];
+ const LIKE=buyer?[['春季风衣','看 3 次 · 4 小时前','加购','o',['#C9B28C','#A8916A']],['驼色羊绒针织开衫','加购 · 19 小时前','加购','o',['#D9B88F','#B38A5A']],['羊毛双面呢大衣','看 2 次 · 3 天前','看过','n',['#8E9AA8','#5E6A78']]]:[['经典双排扣风衣','今天看 3 次','看过','n',['#EADFCB','#C9B896']]];
+ const row=(t,s,r,pic,lb,id)=>`<div class="row click" ${id?`id="${id}"`:''} data-act="wprod" data-arg="${t}">${th(pic[0],pic[1]).replace('style="','style="width:44px;height:54px;')}<div class="m"><b class="link" style="font-size:15px">${t}</b><div>${s}</div><div>${r}</div></div>${lb||''}<span class="mut">›</span></div>`;
+ return hd('她的衣橱')+`<div class="body"><div class="card" style="display:flex;gap:10px;align-items:center">${av(U.ch,U.i,40)}<div><b>${U.n}</b><div class="sm mut">买过的是她已有的，看过、加购的是她感兴趣的</div></div></div>
+ <div class="card"><div class="ch"><b style="font-size:16px">买过的</b><span class="sm mut">${BUY.length} 件</span></div>${BUY.length?BUY.map(b=>row(b[0],b[1],b[2],b[3],'',b[4])).join(''):'<div class="mut" style="text-align:center;padding:14px 0">还没有购买记录</div>'}</div>
+ <div class="card"><div class="ch"><b style="font-size:16px">感兴趣的</b><span class="sm mut">看过 · 加购 · 收藏</span></div>${LIKE.map(l=>row(l[0],l[1],'',l[4],lab(l[2],l[3]))).join('')}</div></div>`;
+}
+function vChat(){
+ const k=st.kb,U=CHAT[st.chat||'c1'],nw=!!U.nw;
+ const P=[{a:'#C9B28C',b:'#A8916A',c:'A102'},{a:'#B08A58',b:'#8A6A3E',c:'C201'},{a:'#D9CFC0',b:'#B8AC98',c:'B015'},{a:'#4A4A4E',b:'#2C2C30',c:'D088'},{a:'#5A7090',b:'#3C5070',c:'E033'},{a:'#C2B590',b:'#A09270',c:'C305'}];
+ const grid=(t,ids)=>`<div style="font-weight:600;margin:12px 0 4px">${t}</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${ids.map(([p,tag,price,n])=>`<div data-act="gsel" data-arg="${n}" style="border-radius:8px;overflow:hidden;background:#fff;border:2px solid ${st.gsel[n]?'var(--g)':'transparent'};cursor:pointer"><div style="height:72px;position:relative;background:linear-gradient(160deg,${p.a},${p.b})"><span style="position:absolute;left:4px;top:4px;background:rgba(0,0,0,.5);color:#fff;font-size:10px;border-radius:9px;padding:0 6px;line-height:17px">${tag}</span><span class="cb ${st.gsel[n]?'on':''}" style="position:absolute;right:4px;top:4px;width:18px;height:18px;background:${st.gsel[n]?'':'rgba(255,255,255,.5)'};border-color:#fff">${st.gsel[n]?'✓':''}</span></div><div style="padding:4px 6px;font-size:12px">${p.c} ${price}</div></div>`).join('')}</div>`;
+ const cm=COLORS.find(c=>c.n===st.color);
+ const msgs=`<div style="display:flex;gap:8px">${av(U.ch,U.i,34)}<div class="bub">${st.msg||U.msg}</div></div>
+  ${st.sentSet?`<div style="display:flex;justify-content:flex-end"><div class="bub me" style="padding:8px"><div style="background:#fff;border-radius:6px;padding:8px;font-size:13px"><b>推荐合集 · ${st.sentSet} 款</b><div class="sm mut">按需求挑选</div></div></div></div><div class="sm mut" style="text-align:center">已记入跟进记录</div>`:''}
+  ${st.sent?`<div style="display:flex;justify-content:flex-end"><div class="bub me" style="padding:8px;max-width:80%"><div style="display:flex;gap:8px;background:#fff;border-radius:6px;padding:8px">${th(cm.a,cm.b)}<div><b style="font-size:13px">${st.pn||'经典双排扣风衣'}</b><div class="sm mut">${st.color} · M 码有货 · ¥899</div></div></div></div></div><div class="sm mut" style="text-align:center">已记入跟进记录</div>`:''}`;
+ const hd=`<div class="hd"><button class="bk" data-act="back" aria-label="返回">‹</button><div class="t">${U.n}</div><div class="r mut">···</div></div>`;
+ // 微信输入条（与现有输入法一致：语音圈 + 输入框 + 表情 + 发送/加号）
+ const typed=k!=='idle';
+ const inbar=`<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#F5F5F5;border-top:1px solid #E2E4E8"><span style="width:28px;height:28px;border:1.5px solid #333;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px">)))</span><div style="flex:1;height:34px;background:#fff;border-radius:6px;display:flex;align-items:center;padding:0 10px;font-size:16px">${typed?U.n+'<i style="width:1.5px;height:18px;background:var(--g);margin-left:1px"></i>':'<span style="flex:1"></span><span class="mut">🎤</span>'}</div><span style="font-size:22px">☺</span>${typed?'<span style="background:var(--g);color:#fff;border-radius:6px;padding:0 12px;line-height:32px;font-size:15px">发送</span>':'<span style="font-size:24px">⊕</span>'}</div>`;
+ const qk=(arr,pad)=>`<div style="display:flex;gap:4px;justify-content:center;padding:0 ${pad}px;margin-bottom:6px">${arr.map(c=>`<span style="flex:1;height:34px;background:#fff;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 1px 0 #A9AEB5">${c}</span>`).join('')}</div>`;
+ const qwerty=`<div style="background:#D2D5DB;padding:8px 3px 4px">${qk('1234567890'.split(''),0)}${qk('QWERTYUIOP'.split(''),0)}${qk('ASDFGHJKL'.split(''),14)}${qk(['⇧',...'ZXCVBNM'.split(''),'⌫'],0)}<div style="display:flex;gap:4px;margin-bottom:2px">${['符','123',','].map(c=>`<span style="width:34px;height:34px;background:#B9BDC5;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:13px">${c}</span>`).join('')}<span style="flex:1;height:34px;background:#fff;border-radius:5px"></span>${['：','中/英','换行'].map(c=>`<span style="min-width:34px;padding:0 4px;height:34px;background:#B9BDC5;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px">${c}</span>`).join('')}</div></div>`;
+ const tool=`<div style="display:flex;align-items:center;gap:16px;padding:6px 12px 8px;background:#F5F5F5;font-size:20px;color:#333"><span data-act="toast" data-arg="工作台【已有】">▦</span><span data-act="toast" data-arg="话术【已有】">✂</span><span data-act="toast" data-arg="图片">▣</span><span>⊕</span><span id="kb-album" data-act="kbgrid" style="font-size:13px;background:#fff;border-radius:14px;padding:4px 12px;margin-left:auto">△ 我的相册</span><span data-act="toast" data-arg="收起键盘">▽</span></div>`;
+ const ghost=`<div style="position:relative;height:0"><span id="kb-bench" data-act="kbbench" style="position:absolute;right:12px;bottom:4px;width:40px;height:40px;border-radius:50%;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer">☺<b style="position:absolute;right:-3px;top:-3px;background:var(--red);color:#fff;font-size:10px;border-radius:9px;min-width:16px;line-height:16px;text-align:center">3</b></span></div>`;
+ const pill=`<div style="background:#F5F5F5;padding:2px 12px 0;display:flex;justify-content:flex-end;height:30px;align-items:center"><span id="kb-pick" data-act="kbpick" style="background:#fff;border-radius:16px;padding:3px 10px 3px 4px;font-size:14px;color:var(--g);display:flex;align-items:center;gap:4px;cursor:pointer">${av(U.ch,U.i,22)}${nw&&!st.kid?U.n+' · 新客，点此建档':U.n} ▴</span></div>`;
+ const wrap=(inner)=>`${hd}<div class="body wxh" style="background:#EDEDED;display:flex;flex-direction:column;gap:12px;min-height:0">${msgs}</div>${inner}`;
+ if(k==='idle') return wrap(`${inbar}${ghost}${tool}${qwerty}`);
+ if(k==='search') return wrap(`${inbar}${pill}${ghost}${tool}${qwerty}`);
+ if(k==='card') return wrap(`${inbar}
+  <div style="background:#fff;padding:10px 12px 8px">
+   <div style="display:flex;gap:10px;align-items:center">${av(U.ch,U.i,42)}<div style="flex:1;min-width:0"><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><b style="font-size:16px">${U.n}</b>${U.labs}</div><div class="sm mut" style="margin-top:2px">${nw?'需求：'+st.need.风格+' · '+st.need.尺码+' 码 · 预算 '+st.need.预算:U.stat}</div></div>${nw?`<span class="link" data-act="toast" data-arg="客户详情（刚建档）">详情 ›</span>`:`<span class="link" data-go="detail:c1">详情 ›</span>`}</div>
+   <div class="kline" style="margin-top:8px;padding:7px 8px;background:#F5F6F8;border:0;border-radius:6px"><span>🔔</span><span style="flex:1">${st.remind||'未设置跟进提醒'}</span><span class="link" id="kb-remind" data-act="kbremind">${st.remind?'修改':'设提醒'}</span>${st.remind?`<span class="link" data-act="toast" data-arg="已设为已跟进">设为已跟进</span>`:''}</div>
+   <div class="kline" style="padding:4px 0;border:0;font-size:12.5px"><b style="color:#2E9E4F">AI 建议</b><span style="flex:1;line-height:1.5">${nw?'新客首次看款，先发欢迎语，再推 2-3 款符合需求的':'偏好风衣、M 码，加购未买，可发报价并搭配内搭'}</span><span class="link" id="kb-togrid" data-act="kbgrid">去推Ta喜欢 ›</span></div>
+   <div style="display:flex;gap:6px;margin-top:6px;align-items:center"><button data-act="toast" data-arg="开单【已有】" style="flex:1;height:30px;border-radius:15px;background:#F2F3F5;font-size:13px">开单</button><button data-act="toast" data-arg="发订单【已有】" style="flex:1;height:30px;border-radius:15px;background:#F2F3F5;font-size:13px">发订单</button><button data-act="toast" data-arg="余额 ¥1,308.00" style="flex:1.5;height:30px;border-radius:15px;background:#F2F3F5;font-size:13px">余额: ¥1,308 ›</button><button data-act="toast" data-arg="发卡券【已有】" style="flex:1;height:30px;border-radius:15px;background:#F2F3F5;font-size:13px">发卡券</button><button id="kb-wardrobe" data-act="wardrobe" style="flex:1.3;height:30px;border-radius:15px;background:#E8F6EC;color:#07934B;font-size:13px;font-weight:600;white-space:nowrap">她的衣橱</button><span data-act="kbclose" style="font-size:20px;color:#666;cursor:pointer">⊗</span></div>
+  </div>${qwerty}`);
+ if(k==='bench') return wrap(`<div style="background:#F5F6F8;height:430px;overflow:auto;border-top:1px solid #E2E4E8">
+   <div style="display:flex;justify-content:space-between;padding:10px 14px;font-size:18px"><span data-act="kbclose" style="cursor:pointer">✕</span><span>⚙</span></div>
+   <div style="display:flex;gap:8px;padding:0 12px"><div style="flex:1;background:#fff;border-radius:10px;padding:10px"><div class="sm mut">今日访客 ›</div><div class="mut" style="margin-top:6px">--</div></div><div style="flex:1;background:#fff;border-radius:10px;padding:10px"><div class="sm mut">今日收款 ›</div><div class="mut" style="margin-top:6px">--</div></div><div id="kb-flist" data-act="kbflist" style="flex:1.3;background:#fff;border-radius:10px;padding:10px;cursor:pointer;position:relative"><div class="sm mut">今日跟进客户 › ${lab('新','g')}</div><div style="margin-top:6px"><b style="font-size:17px">3</b> <span class="sm">已提醒未跟进</span></div></div></div>
+   ${[['打开微购相册APP → 底部【工作台】→ 右上角【设置】…','推荐话术'],['您可以在【微购相册APP】--【我的】--【设置】----…','推荐话术'],['微购相册普通小程序和专享小程序的区别…','推荐话术']].map(x=>`<div style="background:#fff;border-radius:10px;margin:10px 12px 0;padding:10px 12px;display:flex;gap:8px;align-items:center" data-act="toast" data-arg="插入到输入框【已有】"><div style="flex:1"><div class="sm mut">${x[1]} 1小时前</div><div style="margin-top:4px;font-size:14px;line-height:1.5">${x[0]}</div></div><span class="mut">↖</span></div>`).join('')}</div>`);
+ if(k==='flist') return `<div class="hd"><button class="bk" data-act="kbbench" aria-label="返回">‹</button><div class="t" style="font-weight:400;font-size:13px;color:var(--mut)">客户名/客户备注名/客户编号</div><div class="r" style="font-size:13px">APP ▸</div></div>
+  <div class="body" style="background:#F5F6F8"><div style="text-align:right;margin:6px 8px"><span style="background:#333;color:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer" data-go="tasks">去查看全部跟进任务</span></div>
+  ${[['c1','未成交','高意向 · 近 3 天看款 5 次'],['c2','老客','复购 · 上次购买已 52 天'],['c3','新客','上新到货 · 看过同风格 3 次']].map(([id,t,r])=>`<div class="card" style="margin:8px 12px;padding:10px 12px"><div style="display:flex;gap:10px;align-items:center;cursor:pointer" data-go="detail:${id}">${av(C[id].n,C[id].i,40)}<div><b style="font-size:16px">${C[id].n}</b><div class="sm mut" style="margin-top:2px">${t} · ${r}</div></div></div><div style="display:flex;justify-content:space-between;background:#F5F6F8;border-radius:6px;padding:8px 10px;margin-top:8px;font-size:12.5px"><span class="mut">已提醒，未跟进</span><span class="link" data-act="toast" data-arg="已设为已跟进">设为已跟进</span></div></div>`).join('')}</div>`;
+ const n=Object.values(st.gsel).filter(Boolean).length;
+ return wrap(`<div class="kpanel" style="background:#fff;padding:0;height:470px;display:flex;flex-direction:column"><div style="padding:10px 14px 0"><span class="link" data-act="kbback">‹ ${st.kid?'客户画像':'返回键盘'}</span><div style="display:flex;gap:22px;margin-top:8px;font-size:15px;color:var(--mut)">${['推荐','全部','上新','小视频','分类'].map((t,i)=>`<span style="padding-bottom:6px;${i?'':'color:#2E9E4F;font-weight:600;border-bottom:3px solid var(--g)'}">${t}</span>`).join('')}</div></div>
+  <div style="flex:1;overflow:auto;background:#F5F6F8;padding:10px 12px"><div style="background:#EEF8F1;border:1px solid #CDEBD9;border-radius:8px;padding:8px 10px;font-size:13px"><b style="color:#2E9E4F">AI 推荐：</b>${nw?'你好呀，欢迎～按你说的'+st.need.风格+'、'+st.need.尺码+' 码，先挑了几款，看看喜欢哪件？':'姐，新到了几款春季新品，刚好有你的 M 码，搭配衣柜里已有的就行，发你看看？'}</div>
+  ${grid(nw?'她今天看过的':U.n+'最近看过',[[P[0],'1小时前·看3次','¥268',1],[P[1],'3天前·看2次','¥598',2],[P[2],'1个月前·看1次','¥189',3]])}${grid(nw?'按需求推荐':'相似款推荐',[[P[3],'买2次','¥459',4],[P[4],'买1次','¥159',5],[P[5],'推荐','¥529',6]])}</div>
+  <div style="display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)"><button class="btn grey block" style="padding:0 8px" data-act="kbback">取消</button><button class="btn grey block" style="padding:0 8px" data-act="toast" data-arg="发多图">发多图</button><button class="btn grey block" style="padding:0 8px" data-act="toast" data-arg="发拼图">发拼图</button><button class="btn block ${n?'':'disabled'}" id="sendset" style="padding:0 8px" data-act="sendset">发合集${n?' '+n:''}</button></div></div>`);
+}
+function vProduct(){
+ const sel=COLORS.find(c=>c.n===st.color);
+ return hd('商品详情')+`<div class="body">
+  ${st.fromChat&&!st.pn?`<div class="card" style="background:var(--g2);padding:10px 14px"><b style="font-size:13px">王晓雯 上次购买：米白 M · 52 天前</b></div>`:''}
+  <div class="card" style="padding:0;overflow:hidden">${th(sel?sel.a:COAT.a,sel?sel.b:COAT.b,'l').replace('style="','style="border-radius:0;height:190px;')}<div style="padding:14px"><b style="font-size:17px">${st.pn||'经典双排扣风衣'}</b><div style="color:var(--red);font-weight:600;margin-top:2px">¥899</div></div></div>
+  <div class="card"><div class="ch"><b>颜色与库存</b><span class="sm mut">M 码</span></div><div id="colors">${COLORS.map(c=>`<div class="opt ${c.s?'':'out'} ${st.color===c.n?'on':''}" ${c.s?`data-act="color" data-arg="${c.n}"`:''}>${th(c.a,c.b).replace('style=\"','style=\"width:36px;height:44px;')}<div style="flex:1"><b>${c.n}</b> ${c.tag?lab(c.tag,c.s<=2?'o':'g'):''}</div><span class="${c.s?'':'mut'}" style="font-size:13px">${c.s?`有货 ${c.s} 件`:'缺货'}</span></div>`).join('')}</div></div>
+  <div class="card"><div class="ch"><b>尺码</b></div><div class="chips">${['S','M','L','XL'].map(s=>`<span class="chip ${s==='M'?'on':''}">${s}</span>`).join('')}</div></div></div>
+  <div class="foot"><button class="btn sec block" id="p-push" data-act="pushcoat">推给合适的客户</button><button class="btn block ${st.fromChat&&st.color?'':'disabled'}" id="p-send" data-act="send">发送给客户</button></div>`;
+}
+function vPushpick(){
+ const n=Object.values(st.psel).filter(Boolean).length;
+ const tiles=[...NEW.map(p=>[p.a,p.b]),['#C9B28C','#A8916A'],['#5A7090','#3C5070'],['#D9CFC0','#B8AC98'],['#9FA9AF','#7E8A92'],['#B08A58','#8A6A3E']];
+ return `<div class="hd" style="height:56px;background:#fff;border:0"><button class="bk" data-act="back" aria-label="返回">‹</button><div class="t" style="line-height:1.2">推送上新<div class="sm mut" style="font-weight:400">推送后，自动通知客户看款/转发</div></div><div class="r"></div></div>
+ <div class="body" style="background:#fff;padding:6px 16px 16px"><textarea class="in" placeholder="请输入群发内容..." style="height:96px;background:#fff;padding:8px 0;resize:none"></textarea><div class="mut" style="text-align:right;font-size:13px;margin-bottom:8px">0/2000</div>
+ <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">${tiles.map(t=>`<div style="position:relative">${th(t[0],t[1]).replace('style="','style="width:100%;height:84px;')}<span style="position:absolute;right:0;top:0;background:rgba(0,0,0,.35);color:#fff;width:20px;height:20px;border-radius:0 6px 0 6px;display:grid;place-items:center;font-size:13px">×</span></div>`).join('')}<div style="height:84px;background:#F5F6F8;border-radius:6px;display:grid;place-items:center;font-size:30px;color:#B0B5BC">+</div></div>
+ <div class="fld" id="aud" data-act="aud" style="cursor:pointer;margin-top:14px"><span style="flex:1;width:auto;font-size:16px">推送对象 ${lab('改造','o')}</span><span class="${st.pm==='all'||n?'':'mut'}" style="${st.pm!=='all'&&n?'color:#07934B;font-weight:600':''}">${st.pm==='all'?'全部':st.pm==='rec'?'推荐感兴趣的人'+(n?' · '+n+' 位':' · 去挑选'):'指定'+(n?' · '+n+' 位':' · 去挑选')} ›</span></div>
+ <div class="fld" style="border:0"><span style="flex:1;width:auto;font-size:16px">可推送 ${st.pm==='all'?229:st.pm==='rec'?(n||REC.length):n} 个客户</span><span class="mut">邀请更多 ›</span></div></div>
+ <div class="foot" style="flex-direction:column;gap:8px"><div class="mut" style="text-align:center;font-size:13px">今日可推送 <b style="color:var(--g)">3</b> 次</div><button class="btn" style="width:100%;height:46px;border-radius:23px" id="send0" data-act="pushnow">立即推送</button></div>`;
+}
+function vPushcust(){
+ const p=st.pprod||COAT,n=Object.values(st.psel).filter(Boolean).length,pk=st.pm==='pick',pool=ppool(),all=pool.length>0&&pool.every(k=>st.psel[k]);
+ const rows=pk?pool.map(k=>[k,C[k].r]):REC;
+ return hd(pk?'指定客户':'推荐感兴趣的人')+`<div class="body"><div class="card" style="display:flex;gap:12px;align-items:center">${th(p.a,p.b)}<div><b>${p.n}</b><div class="sm mut">${pk?'从全部客户里手动挑选':`看过、买过的款和它比较相似的客户，共 ${REC.length} 位，理由来自购买和看款记录`}</div></div></div>
+ <div class="card">${rows.map(([k,r])=>{const c=C[k];return `<div class="row click" data-act="psel" data-arg="${k}"><span class="cb ${st.psel[k]?'on':''}">${st.psel[k]?'✓':''}</span>${av(c.n,c.i,38)}<div class="m"><b>${c.n}</b><div style="white-space:normal">${r}</div></div></div>`}).join('')}</div></div>
+ <div class="foot"><span class="row" style="border:0;padding:0;gap:6px;cursor:pointer" id="selall" data-act="selall"><span class="cb ${all?'on':''}">${all?'✓':''}</span>全选</span><span style="flex:1" class="sm mut">已选 ${n} 位</span><button class="btn ${n?'':'disabled'}" id="gen" data-act="gen">确定</button></div>`;
+}
+function vPushconfirm(){
+ const p=st.pprod||COAT,ids=Object.keys(st.psel).filter(k=>st.psel[k]);
+ return hd('确认任务')+`<div class="body"><div class="card"><div class="fld"><span class="mut">任务类型</span><span class="seg"><button class="${st.ttype==='跟进'?'on':''}" data-act="ttype" data-arg="跟进">跟进</button><button class="${st.ttype==='群发'?'on':''}" data-act="ttype" data-arg="群发">群发</button></span></div>
+  <div class="fld"><span class="mut">推荐商品</span><span style="display:flex;gap:8px;align-items:center">${th(p.a,p.b).replace('style=\"','style=\"width:30px;height:38px;')}${p.n}</span></div>
+  <div class="fld"><span class="mut">推送对象</span><span style="text-align:right">${st.pm==='all'?'全部 229 个客户':(st.pm==='rec'?'推荐感兴趣的人 · ':'指定 · ')+ids.length+' 位：'+ids.map(k=>C[k].n).join('、')}</span></div>
+  <div class="fld"><span class="mut">执行人</span><span>林悦（我）</span></div>
+  <div class="fld" style="border:0"><span class="mut">发送方式</span><span>半自动，逐位确认后发送</span></div></div>
+  <div class="sm mut" style="margin:0 4px">${st.ttype==='跟进'?'每位客户单独完成，系统会带上推荐理由':'向这批客户发同一内容，沿用现有群发能力'}</div></div>
+ <div class="foot"><button class="btn block" id="confirm" data-act="confirm">确认并去微信</button></div>`;
+}
+function vWechat(){
+ return `<div class="hd wxh" style="background:#EDEDED"><span class="bk"></span><div class="t">微信</div><div class="r"></div></div><div class="body wxh" style="background:#EDEDED;text-align:center;padding-top:80px"><div style="width:64px;height:64px;border-radius:50%;background:var(--g);color:#fff;display:grid;place-items:center;margin:0 auto 14px;font-size:28px">✓</div><b style="font-size:17px">任务已生成</b><div class="sm mut" style="margin:6px 0 20px">已进入现有“半自动发送”，到这里原型结束</div><button class="btn" data-act="home">回到经营概览</button></div>`;
+}
+const VIEWS={wardrobe:vWardrobe,order:vOrder,rec:vRec,overview:vOverview,opplist:vOpp,overdue:vOverdue,team:vTeam,customers:vCustomers,detail:vDetail,tasks:vTasks,perf:vPerf,analysis:vAnalysis,settings:vSettings,chat:vChat,product:vProduct,pushpick:vPushpick,pushcust:vPushcust,pushconfirm:vPushconfirm,wechat:vWechat};
+
+/* engine */
+function openCreate(){const g=[['风格',['通勤','休闲','甜美']],['尺码',['S','M','L']],['预算',['500以下','500-1000','1000以上']]];sheet('快速建档',`<div class="fld"><span class="mut">昵称</span><span>林小夏（取自微信）</span></div><div class="fld"><span class="mut">来源</span><span>微信聊天 · 归属 林悦</span></div><div class="mut sm" style="margin:10px 0 4px">她说的需求（点选，会存成标签）</div>${g.map(([k,o])=>`<div style="display:flex;gap:8px;align-items:center;margin:6px 0"><span class="mut" style="width:36px">${k}</span><div class="chips">${o.map(x=>`<span class="chip ${st.need[k]===x?'on':''}" data-act="need" data-arg="${k}|${x}">${x}</span>`).join('')}</div></div>`).join('')}`,'保存并建档',()=>{st.kid=1;st.kb='card';ev('create');render();toast('已建档，需求已存成标签')})}
+function openRemind(){sheet('设置跟进提醒',`<div class="mut sm" style="margin-bottom:6px">客户说了什么（记录需求）</div><textarea class="in" id="rtext" style="height:64px;width:100%;resize:none">客户说过两天再看看，关注米白风衣 M 码</textarea><div class="chips" style="margin:8px 0">${['要比价','等发薪','问家人','要尺码'].map(t=>`<span class="chip">${t}</span>`).join('')}</div><div class="mut sm" style="margin-bottom:6px">提醒时间</div><div class="chips">${['明天 10:00','后天 10:00','3 天后 10:00'].map(d=>`<span class="chip ${st.rd===d?'on':''}" data-act="rd" data-arg="${d}">${d}</span>`).join('')}</div>`,'保存',()=>{st.remind=st.rd+' 跟进';st.rnote='客户说过两天再看看，关注米白风衣 M 码';ev('save');render();toast('已记录需求，'+st.rd+'提醒你')})}
+function ev(k){ if(!st.scen)return; const s=SCEN[st.scen].steps.find(x=>x.k===k); if(s&&!st.done[k]){st.done[k]=1;} }
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),1800)}
+function render(){
+ const scr=$('#scr'),b=scr.querySelector('.body'),y=b&&scr.dataset.id===st.cur?b.scrollTop:0;
+ scr.innerHTML=VIEWS[st.cur](); scr.dataset.id=st.cur;
+ const nb=scr.querySelector('.body'); if(nb)nb.scrollTop=y;
+ renderNav(); renderNote(); hint();
+}
+function hint(){
+ document.querySelectorAll('.hint').forEach(e=>e.classList.remove('hint'));
+ if(!st.scen)return; const s=SCEN[st.scen].steps.find(x=>!st.done[x.k]); if(!s)return;
+ if(!s.sel)return; const e=$('#scr').querySelector(s.sel)||($('#sheet').classList.contains('on')?$('#sheet').querySelector(s.sel):null); if(e){e.classList.add('hint');}
+}
+function nav(id,reset){ if(reset)st.hist=[]; else if(st.cur!==id)st.hist.push(st.cur); st.cur=id; render(); }
+function back(){ st.cur=st.hist.pop()||'overview'; render(); }
+function renderNav(){
+ $('#pagenav').innerHTML=PAGES.map(([id,n,tg])=>`<button class="i ${st.cur===id?'on':''}" data-act="page" data-arg="${id}"><span>${n}</span><span class="tg ${tg}">${tg==='new'?'新增':'改造'}</span></button>`).join('')+`<button class="i" data-act="toast" data-arg="经营数据【已有】不改，不在本原型内"><span>经营数据</span><span class="tg old">不改</span></button>`;
+ $('#scnav').innerHTML=Object.keys(SCEN).map(k=>{const S=SCEN[k];return (k==='X1'?'<h2 style="margin-top:10px">补充场景（键盘、推送、团队）</h2>':'')+`<button class="sc ${st.scen===k?'on':''}" data-act="scen" data-arg="${k}" id="sc-${k}"><b>${S.title}${S.star?' ★':''}</b><span>${S.short}</span></button>`}).join('');
+}
+function renderNote(){
+ let h='';
+ if(st.scen){const S=SCEN[st.scen],nx=S.steps.find(x=>!st.done[x.k]);
+  h+=`<h3>${S.title}</h3><p>${S.goal}</p><ul class="steps">${S.steps.map(x=>`<li class="${st.done[x.k]?'done':x===nx?'next':''}"><i>${st.done[x.k]?'✓':''}</i><span>${x.t}</span></li>`).join('')}</ul>${nx?'':'<p style="margin-top:10px;color:#07934B;font-weight:600">这个场景走通了。可以换一个场景，或点左侧页面逐个看。</p>'}${nx&&nx.btn?`<div style="margin-top:10px"><button class="btn sm" id="ffwd" data-act="${nx.btn[0]}">${nx.btn[1]}</button></div>`:''}<div style="margin-top:10px"><button class="btn sm grey" data-act="scen" data-arg="${st.scen}">重新开始</button></div><hr style="border:0;border-top:1px solid var(--line);margin:14px 0">`;}
+ const pg=PAGES.find(p=>p[0]===st.cur),nt=NOTES[st.cur];
+ if(pg)h+=`<h3>${pg[1]} <span class="tg ${pg[2]}">${pg[2]==='new'?'新增':'改造'}</span></h3><p>${pg[4]}</p><ul><li>入口：${pg[3]}</li><li>对应流程：${pg[5]}</li></ul>`;
+ else if(nt)h+=`<h3>${nt[0]} <span class="tg ${nt[1]}">${nt[1]==='new'?'新增':nt[1]==='mod'?'改造':'已有'}</span></h3><p>${nt[2]}</p><ul><li>对应流程：${nt[3]}</li></ul>`;
+ else if(st.cur==='detail')h+=`<h3>客户详情 <span class="tg mod">改造</span></h3><p>${PAGES[2][4]}</p><ul><li>对应流程：8、9</li></ul>`;
+ if(!st.scen)h=`<p style="margin-bottom:10px;color:#4E5969">先点左侧一个验收场景，右边会一步步带你走。也可以直接点左侧页面逐个看。</p>`+h;
+ $('#note').innerHTML=h;
+}
+function sheet(title,body,label,fn){ setTimeout(hint,0);
+ const s=$('#sheet');s.innerHTML=`<div><div style="display:flex;justify-content:space-between;margin-bottom:12px"><b style="font-size:16px">${title}</b><button data-act="closesheet" class="mut">关闭</button></div>${body}<button class="btn" style="width:100%;margin-top:12px" id="sheet-ok">${label}</button></div>`;
+ s.classList.add('on'); $('#sheet-ok').onclick=()=>{s.classList.remove('on');fn()};
+}
+const staffPick=(def)=>`<div id="spick">${['林悦','陈小雨','王浩','张凯'].map(n=>`<div class="opt ${n===def?'on':''}" data-act="spick" data-arg="${n}"><b>${n}</b></div>`).join('')}</div>`;
+let picked='林悦';
+const ppool=()=>st.pm==='pick'?Object.keys(C).filter(k=>!ORPH.includes(k)):REC.map(x=>x[0]);
+function openPm(){
+ const o=[['all','全部','所有 229 个客户'],['rec','推荐感兴趣的人','看过、买过的款和新款比较相似的客户，每位带推荐理由'],['pick','指定','手动挑选客户']];
+ sheet('推送对象',o.map(([k,t,d])=>`<div class="opt ${st.pmt===k?'on':''}" id="pm-${k}" data-act="pm" data-arg="${k}"><div style="flex:1"><b>${t}</b><div class="sm mut">${d}</div></div><span class="cb ${st.pmt===k?'on':''}">${st.pmt===k?'✓':''}</span></div>`).join(''),'确定',()=>{
+  const ch=st.pmt!==st.pm;st.pm=st.pmt;if(ch)st.psel={};
+  if(st.pm==='all'){render();return}
+  ev('pmrec'+(st.pm==='rec'?'':'x'));nav('pushcust')});
+}
+function openAssign(){
+ const ks=Object.keys(st.sel).filter(k=>st.sel[k]),n=ks.length,own=st.amode==='own';
+ const by={};ks.forEach(k=>{const o=C[k].o;by[o]=(by[o]||0)+1});
+ const nob=by['无归属']||0;delete by['无归属'];
+ const sum=Object.entries(by).map(([o,x])=>o+' '+x+' 位').join('、');
+ const chip=(g,a,t)=>`<span class="chip ${st[g]===a?'on':''}" id="${g}-${a}" data-act="${g}" data-arg="${a}">${t}</span>`;
+ const body=`<div class="mut sm" style="margin-bottom:6px">${n} 位客户</div><div class="mut sm" style="margin-bottom:6px">任务类型</div><div class="chips" style="margin-bottom:12px">${chip('atype','跟进','跟进')}${chip('atype','群发','群发')}</div><div class="mut sm" style="margin-bottom:6px">执行人</div><div class="chips" style="margin-bottom:10px">${chip('amode','own','按客户归属分配')}${chip('amode','pick','指定员工')}</div>`
+  +(own?`<div style="background:#F5F6F8;border-radius:8px;padding:10px;font-size:13px;line-height:1.6">每位客户交给自己的归属导购，各自收到一条任务。<br><b>${sum||'暂无'}</b>${nob?`<br><span style="color:var(--red)">另有 ${nob} 位没有归属导购，请改用“指定员工”</span>`:''}</div>`:staffPick(picked));
+ sheet('分配任务',body,'确认发布',()=>{ev('pub');const who=own?(sum||'归属导购'):picked;TASKS.unshift({t:st.atype,name:(st.cf==='全部'?'':st.cf+' · ')+'店长分配',sub:n+' 位客户 · '+(own?'按归属分配 '+Object.keys(by).join('、'):'执行人 '+picked)+' · 刚创建',p:[0,n],m:[0,0,0,0,'¥0'],new:1});st.batch=false;st.sel={};st.tf='全部';st.ttab='团队';toast(own?'已发布，各归属导购收到待办':'已发布，'+picked+' 收到待办');nav('tasks')});
+}
+const A={
+ recpage:()=>{ev('recpage');nav('rec')},rsel:a=>{st.rsel[a]=!st.rsel[a];render()},rall:()=>{const ks=['A102','C201','B015','D088','E033','C305','F012','G220','H118'];const all=ks.every(k=>st.rsel[k]);ks.forEach(k=>st.rsel[k]=!all);render()},rsend:()=>{if(!Object.values(st.rsel).some(Boolean)){toast('先勾选要推荐的款');return}ev('rsend');st.fdone[st.cid||'c1']=1;toast('已进入微信发送，记入跟进记录，今日待办已处理');nav('overview',1)},
+ kbgrid:()=>{st.kb='grid';ev('kbgrid');render()},kbback:()=>{st.kb=st.kid?'card':'search';st.gsel={};render()},kbbench:()=>{st.kb='bench';render()},kbflist:()=>{st.kb='flist';render()},kbclose:()=>{st.kb=st.kid?'card':'search';render()},gsel:a=>{st.gsel[a]=!st.gsel[a];if(st.gsel[a])ev('gsel');render()},sendset:()=>{const n=Object.values(st.gsel).filter(Boolean).length;if(!n)return;st.sentSet=n;st.kb='card';st.gsel={};ev('sendset');render();toast('已发合集，记入跟进记录')},dist:a=>{st.dist=a;render()},
+ back,stop(){},toast:a=>toast(a),
+ page:a=>{st.scen=null;st.done={};nav(a,1)},
+ home:()=>{nav('overview',1)},
+ scen:a=>{const S=SCEN[a];st.chat=S.chat||'c1';st.msg=S.msg||'';st.remind=a==='S6'?'':'明天 10:00 跟进';st.rnote='';st.rd='后天 10:00';st.fdone={};st.due=0;st.urged={};st.cf='全部';st.batch=false;st.sel={};st.alay=null;st.aemp=null;st.gsel={};st.sentSet=0;st.rsel={A102:1,C201:1,B015:1,D088:1,E033:1};st.need={风格:'通勤',尺码:'M',预算:'500-1000'};ORPH.forEach(k=>C[k].o='无归属');TASKS.length=0;TASKS.push(...TASKS0);st.scen=a;st.done={};st.seg='mine';st.per='today';st.kb='search';st.kid=0;st.sent=false;st.color=null;st.fromChat=false;st.psel={};st.pm='all';st.pmt='all';st.dtab='全部';st.sort={};st.pn='';st.pprod=null;st.uSel={};st.uBatch=false;nav(SCEN[a].start,1)},
+ seg:a=>{st.seg=a;if(a==='team')ev('team');render()},
+ per:a=>{st.per=a;if(a==='week')ev('week');render()},
+ opp:a=>{st.tf='跟进';nav('tasks')},
+ emp:a=>{if(a==='张凯'){ev('emp');nav('team')}else toast(a+' 的明细：含未跟进客户列表')},
+ ubatch:()=>{st.uBatch=!st.uBatch;st.uSel={};render()},
+ usel:a=>{st.uSel[a]=!st.uSel[a];render()},
+ remind:()=>{ev('act');toast('已提醒张凯跟进 8 位客户');render()},
+ reassign:a=>{picked='林悦';sheet(a==='batch'?'批量重新分配':'转派给',staffPick('林悦'),'确认',()=>{ev('act');st.uBatch=false;st.uSel={};toast('已转派，客户和未完成任务一起转移');render()})},
+ spick:a=>{picked=a;document.querySelectorAll('#spick .opt').forEach(e=>e.classList.toggle('on',e.textContent===a))},
+ closesheet:()=>$('#sheet').classList.remove('on'),
+ cf:a=>{st.cf=a;ev('cf:'+a);render()},batch:()=>{st.batch=!st.batch;st.sel={};if(st.batch)ev('batch');render()},sel:a=>{st.sel[a]=!st.sel[a];if(st.sel[a])ev('csel');render()},
+ assign:()=>{ev('assign');picked='林悦';st.atype='跟进';st.amode='own';openAssign()},
+ amode:a=>{st.amode=a;openAssign()},
+ assign1:()=>sheet('创建跟进任务','<div class="mut sm" style="margin-bottom:6px">执行人</div>'+staffPick('林悦'),'确认发布',()=>toast('已创建，进入待办')),
+ ttab:a=>{st.ttab=a;render()},tf:a=>{st.tf=a;render()},
+ newtask:()=>sheet('新建任务','<div class="opt on"><b>发圈</b><span class="sm mut">已有</span></div><div class="opt"><b>群发</b><span class="sm mut">新增 · 半自动发送</span></div><div class="opt"><b>跟进</b><span class="sm mut">新增 · 以客户为单位</span></div><div class="sm mut">自动创建在基础设置按机会类型开关</div>','下一步',()=>toast('设置主题、内容、客户范围、时段，再分配执行人')),
+ ptab:a=>{st.ptab=a;render()},pper:a=>{st.pper=a;render()},
+ auto:a=>{st.auto[a]=st.auto[a]?0:1;render()},
+ recent:()=>{st.fromChat=st.cur==='chat';st.pn='';ev('recent');nav('product')},
+ wardrobe:()=>{ev('wardrobe');nav('wardrobe')},wprod:a=>{ev('wprod');st.fromChat=true;st.pn=a==='经典双排扣风衣'?'':a;nav('product')},
+ dtab:a=>{st.dtab=a;ev('dtab:'+a);render()},prod:a=>{st.fromChat=false;st.pn=a;ev('prod');nav('product')},order:a=>{st.oid=a;ev('order');nav('order')},
+ kbpick:()=>{ev('kbpick');if(CHAT[st.chat].nw&&!st.kid){openCreate();return}st.kb='card';st.kid=1;render()},need:a=>{const [g,v]=a.split('|');st.need[g]=v;openCreate()},kbremind:()=>{ev('remind');openRemind()},rd:a=>{st.rd=a;openRemind()},
+ ffwd:()=>{st.due=1;ev('ffwd');st.seg='mine';toast('已到后天 10:00，收到跟进提醒');nav('overview',1)},
+ od:()=>{ev('od');nav('overdue')},orph:()=>{ev('orph');st.cf='无人跟进';nav('customers')},urge:a=>{st.urged[a]=1;ev('urge');toast('已提醒'+ODT[a][0]+'：'+ODT[a][1]);render()},urgeall:()=>{ODT.forEach((o,i)=>st.urged[i]=1);ev('urge');toast('已催办全部 '+ODT.length+' 项');render()},
+ orphopen:()=>{ev('orphopen');picked='林悦';sheet('分配给导购',staffPick('林悦'),'确认分配',()=>{ORPH.forEach(k=>C[k].o=picked);ev('orphdone');toast(ORPH.length+' 位客户已分配给'+picked+'，并生成跟进任务');render()})},
+ csall:()=>{const l=custList();const all=l.every(([k])=>st.sel[k]);l.forEach(([k])=>st.sel[k]=!all);if(!all)ev('csel');render()},atype:a=>{st.atype=a;openAssign()},
+ sort:a=>{const [k,i]=a.split('|'),c=+i,o=st.sort[k];st.sort[k]=o&&o[0]===c?(o[1]===-1?[c,1]:[-1,0]):[c,-1];ev('sort:'+k);render()},
+ alay:a=>{st.alay=a;ev('alay');render()},aemp:a=>{st.aemp=a;ev('aemp');render()},
+ care:()=>{ev('care');const c=C[st.cid||'c1'];picked='';sheet('发关怀问候',`<div class="mut sm" style="margin-bottom:6px">话术（来自话术库 · 节点关怀）</div><div style="background:#F5F6F8;border-radius:8px;padding:10px;font-size:14px;line-height:1.6;margin-bottom:10px">${c.n[0]}姐，提前祝你生日快乐！给你备了一张生日券，下次到店或在小程序下单直接用～</div><div class="row" style="padding:6px 0"><div class="m"><b style="font-size:14px">附带生日券 ¥30</b><div>发卡券是现有功能</div></div><div class="sw on" role="switch" aria-checked="true"></div></div>`,'确认并去微信',()=>{ev('carego');st.fdone[st.cid||'c1']=1;toast('已进入微信发送，记入跟进记录');nav('overview',1)})},
+
+ color:a=>{st.color=a;ev('color');render()},
+ send:()=>{st.sent=true;st.kb='card';ev('send');st.hist=[];st.cur='chat';render();toast('已发送，记入跟进记录')},
+ push:()=>{ev('push');st.pprod=NEW[0];st.pm='all';st.psel={};nav('pushpick')},aud:()=>{ev('aud');st.pmt=st.pm;openPm()},
+ pm:a=>{st.pmt=a;ev('pmsel:'+a);openPm()},
+ pushnow:()=>{if(st.pm!=='all'&&!Object.values(st.psel).some(Boolean)){toast('先点“推送对象”，选择要推送的客户');return}ev('send');nav('pushconfirm')},
+ pickprod:a=>{st.pprod=NEW[a];st.psel={};st.pm='rec';ev('pickprod');nav('pushcust')},
+ pushcoat:()=>{st.pprod=COAT;st.psel={};st.pm='rec';nav('pushcust')},
+ psel:a=>{st.psel[a]=!st.psel[a];if(Object.values(st.psel).some(Boolean))ev('tick');render()},
+ selall:()=>{const pool=ppool(),all=pool.every(k=>st.psel[k]);pool.forEach(k=>st.psel[k]=!all);if(!all)ev('tick');render()},
+ gen:()=>{ev('gen');if(st.hist[st.hist.length-1]==='pushpick')back();else nav('pushconfirm')},
+ ttype:a=>{st.ttype=a;render()},
+ confirm:()=>{ev('confirm');const p=st.pprod||COAT,n=st.pm==='all'?229:Object.values(st.psel).filter(Boolean).length;TASKS.unshift({t:st.ttype,name:p.n+' · 推给'+(st.pm==='all'?'全部客户':'老客'),sub:n+' 位客户 · 刚创建',p:[0,n],m:[0,0,0,0,'¥0'],new:1});nav('wechat')}
+};
+document.addEventListener('click',e=>{
+ const el=e.target.closest('[data-act],[data-go]'); if(!el)return;
+ const act=el.dataset.act,g=el.dataset.go;
+ if(act&&A[act])A[act](el.dataset.arg);
+ if(g){ev('go:'+g);const [id,arg]=g.split(':');if(arg)st.cid=arg;if(id==='tasks')st.tf='全部';nav(id)}
+});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList.contains('sw')){e.preventDefault();e.target.click()}});
+$('#phone').addEventListener('click',()=>{});
+render();
+</script>
+</body></html>
