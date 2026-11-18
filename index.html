@@ -157,10 +157,6 @@ button:focus-visible,.chip:focus-visible,.row:focus-visible{outline:2px solid va
 .wxh{background:#EDEDED}
 </style>
 <body>
-<div id="gate" style="position:fixed;inset:0;z-index:9999;background:#F4F6F5;display:flex;align-items:center;justify-content:center;font-family:-apple-system,'PingFang SC',sans-serif"><form onsubmit="return unlock(event)" style="background:#fff;border-radius:14px;padding:28px 26px;width:300px;box-shadow:0 4px 24px rgba(0,0,0,.08);text-align:center"><b style="font-size:18px">微购 SCRM 原型</b><div style="color:#86909C;font-size:13px;margin:6px 0 16px">请输入访问密码</div><input id="gpw" type="password" autocomplete="off" autofocus style="width:100%;box-sizing:border-box;height:40px;border:1px solid #DCDFE6;border-radius:8px;padding:0 12px;font-size:15px"><div id="gerr" style="color:#E5484D;font-size:12.5px;height:18px;margin-top:6px"></div><button style="width:100%;height:42px;border:0;border-radius:8px;background:#07C160;color:#fff;font-size:15px;font-weight:600;cursor:pointer">进入</button></form></div>
-<script>function hh(s,x){for(var i=0;i<s.length;i++)x=((x<<5)+x+s.charCodeAt(i))>>>0;return x}
-function unlock(e){e.preventDefault();var v=document.getElementById('gpw').value;if(hh(v,5381)+'-'+hh(v,52711)==='3500618880-398176098'){document.getElementById('gate').remove()}else{document.getElementById('gerr').textContent='密码不对，请重试'}return false}</script>
-
 <div class="app">
   <aside class="nav">
     <h1>微购相册 · SCRM</h1>
@@ -213,10 +209,18 @@ const TASKS=[
  {t:'群发',name:'羊毛大衣上新 · 老客群发',sub:'4 人执行 · 半自动发送',p:[3,4],m:[96,81,23,4,'¥5,280']},
  {t:'跟进',name:'高意向客户跟进',sub:'机会来源：高意向 · 自动创建 · 共 20 位客户 · 3 人执行',p:[12,20],m:[12,12,9,3,'¥2,980']}];
 const TASKS0=TASKS.slice();
+const MSGS=[{k:'g1',t:'沉睡客户唤醒 · 老客券',sub:'人群：沉睡 230 人 · 每人每周最多 1 条',txt:'好久不见～新款针织到了，送你一张 20 元老客券，3 天内有效',pics:0},
+ {k:'g2',t:'推送上新',sub:'人群：全部 · 8908 人',txt:'换季上新啦～冬季新款已到店，点图看详情，今天下单还送专属优惠券哦',ai:1,pics:1}];
+const MOM=[{k:'q1',time:'14:00',t:'买家秀 · 碎花连衣裙',sub:'文案已自动加价 +¥30 · 带我的水印',cols:['#A84E4E','#3A5A48','#ECECEC']}];
+const PICC=['#C4A68A','#B59A80','#4A494D','#85603F','#445A78','#A84E4E','#3A5A48','#E6E2DA','#808080'];
+const DONE0=[{kind:'发圈',title:'09:00 早安 · 秋季新品',sub:'带我的水印',time:'09:00',res:'已发布'},{kind:'跟进',title:C.c5.n,sub:'上次购买超过 80 天',time:'09:10',res:'已跟进'},{kind:'群发',title:'羊毛大衣上新 · 老客群发',sub:'人群：老客 96 人',time:'08:40',res:'已群发'}];
+const CREATED0=[{kind:'跟进',title:C.c10.n,sub:'流失召回 · 62 天未联系',who:'张凯',done:0},{kind:'跟进',title:C.c9.n,sub:'上新到货 · 看过同风格 2 次',who:'陈小雨',done:0},{kind:'群发',title:'上新到货群发 · 4 位客户',sub:'逾期 2 天',who:'王浩',done:0},{kind:'发圈',title:'秋冬新品朋友圈',sub:'今天 10:00',who:'陈小雨',done:1}];
+const CREATED=CREATED0.map(x=>({...x}));
+
 const ORPH=['c14','c15','c16','c17','c18'];
 const ODT=[['张凯','高意向客户跟进','5 位客户','逾期 3 天'],['张凯','流失召回跟进','3 位客户','逾期 2 天'],['王浩','上新到货群发','4 位客户','逾期 2 天'],['陈小雨','高意向客户跟进','2 位客户','逾期 1 天'],['王浩','节点关怀跟进','1 位客户','逾期 1 天'],['林悦','复购跟进','1 位客户','逾期 1 天']];
 const DIST={生命周期:[['未成交',1168,'+3%'],['新客',386,'-34%'],['老客',4102,'+16%'],['预流失',302,'+75%'],['流失',1201,'+1%']],客户价值:[['高价值',820,'+8%'],['中价值',2960,'+2%'],['低价值',4862,'-1%']],客户渠道:[['小程序',4210,'+9%'],['扫码',2630,'+4%'],['导入',1802,'0%']],所属导购:[['林悦',2640,'+3%'],['陈小雨',2310,'+5%'],['王浩',2105,'+2%'],['张凯',1587,'-6%']],商品偏好:[['连衣裙',2100,'+6%'],['风衣',1620,'+12%'],['针织',1480,'+4%']]};
-const st={dist:'生命周期',gsel:{},rsel:{A102:1,C201:1,B015:1,D088:1,E033:1},scen:null,done:{},cur:'overview',hist:[],seg:'mine',per:'today',ptab:'perf',pper:'week',oppf:'全部',cf:'全部',batch:false,sel:{},kb:'search',sent:false,sentSet:0,chat:'c1',msg:'',remind:'明天 10:00 跟进',rnote:'',rd:'后天 10:00',fdone:{},due:0,urged:{},alay:null,aemp:null,need:{风格:'通勤',尺码:'M',预算:'500-1000'},color:null,fromChat:false,pprod:null,psel:{},pm:'all',pmt:'all',dtab:'全部',oid:'o1',sort:{},atype:'跟进',amode:'own',ttype:'跟进',ttab:'我执行',tf:'全部',uSel:{},uBatch:false,auto:{高意向:1,'复购与关联':1,上新到货:0,节点关怀:1,流失召回:0}};
+const st={dist:'生命周期',gsel:{},rsel:{A102:1,C201:1,B015:1,D088:1,E033:1},scen:null,done:{},cur:'overview',hist:[],seg:'mine',per:'today',ptab:'perf',pper:'week',oppf:'全部',cf:'全部',batch:false,sel:{},kb:'search',sent:false,sentSet:0,chat:'c1',msg:'',remind:'明天 10:00 跟进',rnote:'',rd:'后天 10:00',fdone:{},due:0,urged:{},alay:null,aemp:null,need:{风格:'通勤',尺码:'M',预算:'500-1000'},color:null,fromChat:false,pprod:null,psel:{},pm:'all',pmt:'all',dtab:'全部',oid:'o1',sort:{},atype:'跟进',amode:'own',ttype:'跟进',ttab:'我执行',tf:'全部',tstat:'todo',mdone:{},fk:'全部',ft:'近30天',fsr:'全部',atab:'跟进',adim:{},uSel:{},uBatch:false,auto:{高意向:1,'复购与关联':1,上新到货:0,节点关怀:1,流失召回:0}};
 const SCEN={
 S1:{star:1,title:'S1 导购：新客接待',short:'新客第一次看款，快速建档、推荐商品',goal:'新客林小夏第一次来看款并在微信里问话。快速建档、记下她的需求，再按需求推荐商品。',start:'chat',chat:'c13',steps:[
  {k:'kbpick',t:'输入法识别出这是新朋友，点输入框上方“林小夏 · 新客，点此建档”',sel:'#kb-pick'},
@@ -260,8 +264,11 @@ S8:{star:1,title:'S8 店长：检查执行情况',short:'没人跟的客户、�
  {k:'orph',t:'返回，点“无人跟进的客户”',sel:'#kpi-orph'},
  {k:'orphopen',t:'点“分配给导购”',sel:'#orph-assign'},
  {k:'orphdone',t:'选导购，点“确认分配”',sel:'#sheet-ok'}]},
-S9:{title:'S9 老板：经营复盘',short:'哪些机会带来成交、哪些导购跟进有效',goal:'复盘一段时间的跟进效果：哪类机会成交多、哪位导购有效，并去基础设置调整。',start:'overview',steps:[
- {k:'go:analysis',t:'在经营概览“跟进效果”点“复盘 ›”',sel:'#to-ana'},
+S9:{title:'S9 老板：经营复盘',short:'哪些机会带来成交、哪些导购跟进有效',goal:'复盘一段时间的经营效果：跟进、群发、发圈各带来多少成交，哪类机会、哪位导购有效，并去基础设置调整。',start:'overview',steps:[
+ {k:'go:analysis',t:'在经营概览“经营效果”点“复盘 ›”',sel:'#to-ana'},
+ {k:'atab:群发',t:'顶部切到“群发”，看每条群发的进入、下单和金额',sel:'#at-群发'},
+ {k:'atab:发圈',t:'再切到“发圈”，看哪类朋友圈带来的下单多（从小程序链接 / 小程序码进入即计入）',sel:'#at-发圈'},
+ {k:'atab:跟进',t:'切回“跟进”',sel:'#at-跟进'},
  {k:'sort:lay',t:'在“分层跟进效果”点“转化率”表头排序，看哪类机会转化最高',sel:'#th-lay-4'},
  {k:'alay',t:'点“上新到货”，看它的成交贡献',sel:'#lay-上新到货'},
  {k:'aemp',t:'在“员工跟进分析”点“王浩”，看他的成交',sel:'#emp-王浩'},
@@ -287,12 +294,13 @@ X3:{title:'补充 · 谁跟进最少',short:'按导购看未跟进客户',goal:'
  {k:'emp',t:'点排在最前的员工',sel:'#team tr.click'},
  {k:'act',t:'对未跟进客户“一键提醒”，或勾选后“批量重新分配”',sel:'#remind'}]}};
 const PAGES=[
- ['overview','经营概览','mod','我的 → 粉丝','参考新版“客户经营”：今日待办直接列出待跟进客户，可切我的待办 / 团队待办；下面是粉丝总览、跟进效果、客户分布、转化漏斗。模块是否展示沿用员工现有权限。','6、7B、10、14'],
+ ['overview','经营概览','mod','我的 → 粉丝','参考新版“客户经营”：先看粉丝总览，再是今日待办（直接列出待跟进客户，可切我的待办 / 团队待办）；下面是经营效果、客户分布、转化漏斗。模块是否展示沿用员工现有权限。','6、7B、10、14'],
  ['customers','客户列表','mod','好友页 → 粉丝与客户','原“粉丝与客户”。新增机会筛选、机会提示、批量分配任务。右上“今日机会 / 待办”替代原“等你推上新”。','6、11'],
  ['detail','客户详情','mod','客户列表 / 机会清单 / 键盘','按“客户 360”还原，现有功能全部保留（余额、积分、优惠券、开单、对账、归属、权限、完整档案）。新增 AI 建议卡；“最近动态”可按类型切换，商品名可点进商品详情，最近下单放在“交易”里、点进订单详情；粉丝与客户合并，“去邀请”是一个操作。','8、9'],
- ['tasks','任务中心','mod','工作台 → 我的待办','原只有发圈，现并入群发、跟进。自动创建的开关在基础设置里按机会类型设置。','10、12'],
+ ['tasks','任务中心','mod','工作台 → 我的待办','打开就是待办清单：上面是“待处理 / 已处理”的数量，下面每一位要跟进的客户、每一条要群发的消息、每一条要发的朋友圈各占一条，直接在条目上操作；做完自动移到“已处理”。顶部可按全部 / 跟进 / 群发 / 发圈过滤。“我创建”看我派给别人的、可催办；“团队”按员工看待处理数量。自动创建的开关在基础设置里按机会类型设置。','10、12'],
  ['perf','员工业绩','mod','原入口','现有业绩不变，新增“任务”页签与“本周”。团队跟进统计并入这里。','15'],
- ['analysis','跟进效果复盘','new','经营概览 → 跟进效果 → 复盘','跟进闭环、员工跟进分析、分层跟进效果、话术效果排行、结论与建议。与“经营数据”分开，不改经营数据。','16'],
+ ['funnel','转化漏斗','mod','经营概览 → 转化漏斗 → 查看完整漏斗','浏览 → 加购/收藏 → 下单 → 支付，可按客户类型、时间、来源筛选；漏斗中间显示每一步的转化和流失，并标出流失最多的一步；下面是来源分布，点来源可只看它的漏斗。朋友圈来源即从朋友圈小程序链接 / 小程序码进入。','14'],
+ ['analysis','经营效果复盘','new','经营概览 → 经营效果 → 复盘','顶部三个 tab：跟进 / 群发 / 发圈，口径统一为 触达 → 进入 → 下单 → 金额。一笔订单只记给最近一次触达，三项相加不重复；发圈以朋友圈里的小程序链接 / 小程序码进入为准，没有曝光数据。与“经营数据”分开，不改经营数据。','16'],
  ['settings','基础设置','new','经营概览 / 我的','机会规则、自动建任务开关、分层口径、话术与标签。员工与权限沿用现有。','17'],
  ['chat','键盘面板','mod','微信聊天 → 微购键盘','按现有输入法还原：输入客户名后上方出现识别条，点开是客户卡（跟进提醒、开单/发订单/余额/发卡券）；点右上角悬浮图标进工作台，“今日跟进客户”进待跟进列表。新增：AI 建议、去推Ta喜欢，以及“发卡券”后面的“她的衣橱”入口。','7、7A、9']];
 const NOTES={wardrobe:['她的衣橱','new','键盘客户卡里“发卡券”之后新增的入口。上面是她买过的，下面是她感兴趣的（看过、加购、收藏）；点商品进商品详情。以后其他“她的”维度（尺码、搭配）也放这里，不再往客户卡上加入口。','7A'],order:['订单详情','old','现有订单详情。客户详情“最近动态 → 交易”里点“订单详情”进入；新增“成交归因”一行，说明这单是否来自跟进任务。','8、9'],overdue:['逾期任务','new','团队视图点“逾期任务”进入：谁的哪个任务逾期了、逾期几天，可单个或一键催办。','14'],rec:['推荐商品','new','客户详情 AI 建议卡点“推荐款发给她”进入：AI 话术、最近看过、相似款，勾选后发微信推荐。','7'],opplist:['机会清单','new','今日机会点进来，按优先级排序，每位客户带一句理由。','6'],team:['未跟进客户','new','团队视图点员工后进入。包含未完成的跟进任务、未处理的机会、久未联系三类。','14'],product:['商品页','old','现有商品页，新增“推给合适的客户”入口，键盘“最近购买”点进来能看各颜色库存。','7A、7B'],pushpick:['推送上新','mod','沿用现有“推送上新”页，只改一处：把“谁可以看”和“推送对象”合并成一项“推送对象”，三选一：全部 / 推荐感兴趣的人 / 指定。','7B'],pushcust:['选择客户','new','“推荐感兴趣的人”：系统按偏好推荐老客，每位带理由；“指定”：从全部客户里手动挑。勾选后确定，回到推送页。','7B'],pushconfirm:['确认任务','new','确认类型、客户、商品，之后进入现有半自动发送。','7B']};
@@ -308,26 +316,27 @@ function oppCounts(){return [['高意向',6],['复购与关联',4],['上新到�
 function vOverview(){
  const team=st.seg==='team';
  const rows=sorted().map(([n,d],i)=>`<tr class="click" data-act="emp" data-arg="${n}"><td><b>${n}</b> ${i===0?lab('最少','r'):''}</td><td>${d[st.per][0]}</td><td style="color:var(--org);font-weight:600">${d.u}</td><td>${d[st.per][1]}%</td><td>${d[st.per][2]}</td></tr>`).join('');
- const nd=Object.values(st.fdone).filter(Boolean).length;
+ const nd=Object.values(st.fdone).filter(Boolean).length+Object.values(st.mdone).filter(Boolean).length;
  const mine=['c1','c2','c3','c4'].map(k=>{const c=C[k],dn=st.fdone[k],due=st.due&&k==='c1';const why=due?'跟进提醒：'+(st.rnote||'客户说过两天再看看'):c.r;return `<div class="row click" id="todo-${k}" data-go="detail:${k}" style="${dn?'opacity:.5':''}"><span style="width:7px;height:7px;border-radius:50%;background:${due?'var(--red)':'var(--org)'};flex:none"></span><div class="m" style="flex:1"><b style="font-size:16px">${c.n}</b> ${dn?lab('已跟进','g'):due?lab('到期提醒','r'):lab(c.opp,c.oc)}<div style="white-space:normal">${why}</div></div><button class="btn sm" style="background:var(--g2);color:#07934B;font-weight:500">${dn?'已处理':'去跟进 ›'}</button></div>`}).join('');
  const D=DIST[st.dist];
  const mx=Math.max(...D.map(x=>x[1]));
  return hd('经营概览',{back:false,r:'<span class="link" data-go="settings">设置</span>'})+`<div class="body">
+ <div class="card"><div class="ch"><b style="font-size:17px">粉丝总览</b></div><div class="grid g3"><div class="stat" data-go="customers"><b>36</b><span>昨日新增 ›</span></div><div class="stat" data-go="customers"><b>386</b><span>本月新增 ›</span></div><div class="stat" id="fans-total" data-go="customers"><b>8,642</b><span>客户总数 ›</span></div></div>
+  <div class="grid g3" style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px;text-align:center"><span data-act="toast" data-arg="访客足迹【已有】" style="cursor:pointer">访客足迹</span><span id="qa-push" data-act="push" style="cursor:pointer;color:#C66A0C;font-weight:600">推上新</span><span data-go="tasks" style="cursor:pointer">任务中心</span></div></div>
  <div class="card"><div class="ch"><b style="font-size:17px">今日待办</b></div>
-  <div class="chips" style="margin-bottom:6px"><span class="chip ${team?'':'on'}" id="seg-mine" data-act="seg" data-arg="mine" style="height:32px">我的待办 ${7-nd}</span><span class="chip ${team?'on':''}" id="seg-team" data-act="seg" data-arg="team" style="height:32px">团队待办 23 <span class="lab b" style="margin-left:6px">店长</span></span></div>
+  <div class="chips" style="margin-bottom:6px"><span class="chip ${team?'':'on'}" id="seg-mine" data-act="seg" data-arg="mine" style="height:32px">我的待办 ${7-nd}</span><span class="chip ${team?'on':''}" id="seg-team" data-act="seg" data-arg="team" style="height:32px">团队待办 24 <span class="lab b" style="margin-left:6px">店长</span></span></div>
   ${team?`<div class="chips" style="margin:8px 0">${['today','week','month'].map(p=>`<span class="chip ${st.per===p?'on':''}" id="per-${p}" data-act="per" data-arg="${p}">${perName[p]}</span>`).join('')}</div>
   <div class="grid g2" style="margin:8px 0"><div id="kpi-od" data-act="od" style="background:#FFF3E5;border-radius:10px;padding:10px 12px;cursor:pointer"><b style="font-size:21px;color:var(--org)">${ODT.length}</b><div class="sm mut">逾期任务 ›</div></div><div id="kpi-orph" data-act="orph" style="background:#FDECEC;border-radius:10px;padding:10px 12px;cursor:pointer"><b style="font-size:21px;color:var(--red)">${ORPH.length}</b><div class="sm mut">无人跟进的客户 ›</div></div></div>
   <table class="t" id="team"><tr><th>员工</th><th>跟进客户</th><th>未跟进</th><th>完成率</th><th>逾期</th></tr>${rows}</table>
   <div class="sm mut" style="margin-top:8px">按跟进客户数从少到多排序，点员工看他的未跟进客户</div>`:`${mine}<div class="link" style="text-align:center;padding:12px 0 2px" data-go="tasks">查看全部 7 条待办 ›</div>`}</div>
- <div class="card"><div class="ch"><b style="font-size:17px">粉丝总览</b></div><div class="grid g3"><div class="stat" data-go="customers"><b>36</b><span>昨日新增 ›</span></div><div class="stat" data-go="customers"><b>386</b><span>本月新增 ›</span></div><div class="stat" id="fans-total" data-go="customers"><b>8,642</b><span>客户总数 ›</span></div></div>
-  <div class="grid g3" style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px;text-align:center"><span data-act="toast" data-arg="访客足迹【已有】" style="cursor:pointer">访客足迹</span><span id="qa-push" data-act="push" style="cursor:pointer;color:#C66A0C;font-weight:600">推上新</span><span data-go="tasks" style="cursor:pointer">任务中心</span></div></div>
- <div class="card"><div class="ch"><b style="font-size:17px">跟进效果</b><span class="link" id="to-ana" data-go="analysis">复盘 ›</span></div>
-  <div class="grid g2"><div style="background:#F8FAF9;border-radius:10px;padding:12px"><b style="font-size:22px">¥86.4万</b><div class="sm mut">影响交易金额</div></div><div style="background:#F8FAF9;border-radius:10px;padding:12px"><b style="font-size:22px">23.2%</b><div class="sm mut">机会 → 成交转化</div><div class="dl up">↑3.1%</div></div></div></div>
+ <div class="card"><div class="ch"><b style="font-size:17px">经营效果</b><span class="link" id="to-ana" data-go="analysis">复盘 ›</span></div>
+  <div style="background:#F8FAF9;border-radius:10px;padding:12px"><b style="font-size:22px">¥93.7万</b><div class="sm mut">近 30 天影响交易金额 · 三项合计</div></div>
+  <div class="grid g3" style="margin-top:8px;text-align:center">${[['跟进','¥86.4万'],['群发','¥4.7万'],['发圈','¥2.6万']].map(x=>`<div id="eff-${x[0]}" data-act="toana" data-arg="${x[0]}" style="cursor:pointer;padding:6px 0"><b style="font-size:16px">${x[1]}</b><div class="sm mut">${x[0]} ›</div></div>`).join('')}</div></div>
  <div class="card"><div class="ch"><b style="font-size:17px">客户分布</b><span class="sm mut">较上月</span></div>
   <div class="chips" style="margin-bottom:10px">${Object.keys(DIST).map(k=>`<span class="chip ${st.dist===k?'on':''}" data-act="dist" data-arg="${k}">${k}</span>`).join('')}</div>
   ${D.map(([n,v,d])=>`<div class="fun" style="margin:10px 0"><span class="n" style="width:62px;font-size:14px">${n}</span><div class="bar" style="height:14px"><i style="width:${v/mx*100}%;background:#9DE0BE"></i></div><span style="width:46px;text-align:right;font-weight:600">${v.toLocaleString()}</span><span class="dl" style="width:44px;text-align:right;color:${d[0]==='-'?'#07934B':'var(--red)'}">${d}</span></div>`).join('')}
   <div class="sm mut">生命周期按最近消费与历史消费自动判定 <span class="link" data-go="settings">设置 ›</span></div></div>
- <div class="card"><div class="ch"><b style="font-size:17px">转化漏斗</b><span class="link" data-go="analysis">查看完整漏斗 ›</span></div><div class="sm mut" style="margin-bottom:8px">近 30 天 · 全量客户</div>
+ <div class="card"><div class="ch"><b style="font-size:17px">转化漏斗</b><span class="link" id="to-fun" data-go="funnel">查看完整漏斗 ›</span></div><div class="sm mut" style="margin-bottom:8px">近 30 天 · 全量客户</div>
   ${[['浏览','6,842','100.0%',100],['加购/收藏','3,421','50.0%',50],['下单','1,595','23.3%',23],['支付','1,024','15.0%',15]].map(f=>`<div class="fun"><span class="n" style="width:70px">${f[0]}</span><div class="bar" style="height:18px"><i style="width:${f[3]}%"></i></div><b style="width:50px;text-align:right">${f[1]}</b><span class="mut" style="width:46px;text-align:right;font-size:11px">${f[2]}</span></div>`).join('')}</div>
  </div>
  <div class="foot" style="justify-content:space-around;padding:6px 0;font-size:11px;color:var(--mut)">${['相册动态','客户','工作台','消息','我'].map((t,i)=>`<div style="text-align:center;color:${i===1?'var(--g)':'inherit'}"><div style="width:22px;height:22px;border-radius:6px;border:2px solid currentColor;margin:0 auto 2px"></div>${t}</div>`).join('')}</div>`;
@@ -364,10 +373,13 @@ function vDetail(){
  const k=st.cid||'c1',c=C[k],first=k==='c1';
  const pl=n=>`<span class="link" style="font-size:inherit" data-act="prod" data-arg="${n}">「${n}」</span>`,ol=(o)=>`<span class="link" style="white-space:nowrap" data-act="order" data-arg="${o}">订单详情 ›</span>`,buyer=c.spend!=='¥0';
  const fs=(src,res,ok)=>`<div class="sm mut" style="margin-top:3px">${src} · ${lab(res,ok?'g':'n')}</div>`;
- const ALL=[['跟进','半小时前','销售'+c.o+'完成微信跟进'],['商品行为','4 小时前','重复查看'+pl('春季风衣')+'第 3 次'],['商品行为','19 小时前','加购 2 款：'+pl('春季风衣')+'、'+pl('驼色羊绒针织开衫')+'，尚未下单'],
-  ...(buyer?[['交易','3 天前','完成订单 ¥680 · '+pl('连衣裙')+' ×1 '+ol('o1')]]:[]),['活动','5 天前','参与「秋季上新」活动，领取优惠券 1 张'],['跟进','6 天前',c.o+' 已报价，考虑中'+fs('来自「高意向」跟进任务',buyer?'成交结果：3 天后下单 ¥680':'成交结果：暂无',buyer)],['转介绍','12 天前','转介绍客户「李女士」完成首单'],['跟进','19 天前',c.o+' 推了新款针织，已读未回'+fs('手动记录','成交结果：暂无',0)],
-  ...(buyer?[['交易','52 天前','完成订单 ¥899 · '+pl('经典双排扣风衣')+' 米白 M ×1 '+ol('o2')]]:[])];
- const tl=(st.dtab==='全部'?ALL.slice(0,5):ALL.filter(x=>x[0]===st.dtab)).map(x=>[x[1],x[2]]);
+ const sb=t=>`<div class="sm mut" style="margin-top:3px">${t}</div>`;
+ // [类型, 时间, 标题, 副文案, 商品缩略图(有则为商品类动态), 是否高亮]
+ const ALL=[['跟进','11月18日 09:30','销售'+c.o+'完成微信跟进','',''],['商品行为','11月18日 06:10','重复查看'+pl('春季风衣'),sb('第 3 次'),'春季风衣',1],['商品行为','11月17日 15:20','加购 2 款',sb(pl('春季风衣')+'、'+pl('驼色羊绒针织开衫')+' · 尚未下单'),'春季风衣',1],
+  ...(buyer?[['交易','11月15日','完成订单 ¥680',sb(pl('连衣裙')+' ×1 　'+ol('o1')),'']]:[]),['活动','11月13日','参与「秋季上新」活动，领取优惠券 1 张','',''],['跟进','11月12日',c.o+' 已报价，考虑中',fs('来自「高意向」跟进任务',buyer?'成交结果：3 天后下单 ¥680':'成交结果：暂无',buyer),''],['转介绍','11月6日','转介绍客户「李女士」完成首单','',''],['跟进','10月30日',c.o+' 推了新款针织，已读未回',fs('手动记录','成交结果：暂无',0),''],
+  ...(buyer?[['交易','9月26日','完成订单 ¥899',sb(pl('经典双排扣风衣')+' 米白 M ×1 　'+ol('o2')),'']]:[])];
+ const GR=['linear-gradient(135deg,#e3ece6,#bccfc2)','linear-gradient(135deg,#f1e6da,#d8c4b0)','linear-gradient(135deg,#e6e3ee,#c6c0d6)'];
+ const tl=(st.dtab==='全部'?ALL.slice(0,5):ALL.filter(x=>x[0]===st.dtab));
  return hd('客户 360')+`<div class="body">
  <div class="card"><div style="display:flex;gap:14px"><div style="text-align:center">${av(c.n,c.i,70)}<div class="lab n" style="margin-top:4px">${9000+k.length*131}</div></div><div style="flex:1"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><b style="font-size:20px">${c.n}</b><span class="lab o" style="font-weight:700">V2</span><span class="lab n">复制</span>${c.bound?'':`<button class="btn sm sec" data-act="toast" data-arg="已发送邀请，客户授权后合并身份">去邀请</button>`}</div>
   <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${lab('余额¥1308.00')} ${lab('积分 9088')} ${lab('优惠券 2 张')} ${c.tags.map(t=>lab(t)).join(' ')} ${lab('生日 12-25','o')}</div></div></div>
@@ -377,7 +389,7 @@ function vDetail(){
   <div style="display:flex;gap:8px"><button class="btn grey block" data-act="assign1">建跟进任务</button>${['节点关怀','流失召回',''].includes(c.opp)?`<button class="btn block" id="care-btn" data-act="care">发关怀问候</button>`:`<button class="btn block" id="rec-btn" data-act="recpage">推荐款发给她</button>`}</div></div></div>
  <div class="card"><div class="ch"><b style="font-size:16px">最近动态</b><span class="link" data-act="toast" data-arg="粉丝数据">粉丝数据</span></div>
   <div class="chips" id="dtabs" style="margin-bottom:10px;gap:16px;overflow-x:auto;flex-wrap:nowrap">${['全部','商品行为','交易','跟进','活动','转介绍'].map(t=>`<span id="dt-${t}" data-act="dtab" data-arg="${t}" style="white-space:nowrap;cursor:pointer;padding-bottom:4px;color:${st.dtab===t?'var(--ink)':'var(--mut)'};font-weight:${st.dtab===t?600:400};border-bottom:2px solid ${st.dtab===t?'var(--g)':'transparent'}">${t}</span>`).join('')}</div>
-  ${tl.length?tl.map(([t,s])=>`<div style="display:flex;gap:10px;padding:9px 0;font-size:14px;line-height:1.5"><span style="width:8px;height:8px;border-radius:50%;background:var(--g);margin-top:7px;flex:none"></span><span class="mut" style="width:62px;flex:none">${t}</span><span style="flex:1">${s}</span></div>`).join(''):'<div class="mut" style="text-align:center;padding:18px 0">暂无'+st.dtab+'记录</div>'}
+  ${tl.length?`<div style="position:relative;margin-top:2px"><div style="position:absolute;left:5px;top:10px;bottom:10px;width:2px;background:var(--line)"></div>`+tl.map(([ty,t,ti,sub,th,hot])=>`<div style="position:relative;padding:0 0 18px 26px"><span style="position:absolute;left:0;top:4px;width:8px;height:8px;border-radius:50%;background:#fff;border:3px solid ${hot?'#d9533f':'#cfd3d8'}"></span><div style="font-size:14px;color:${hot?'#d9533f':'var(--mut)'};line-height:1.4">${t}</div>${th?`<div style="display:flex;gap:12px;margin-top:8px;align-items:center"><div data-act="prod" data-arg="${th}" style="width:76px;height:76px;border-radius:14px;flex:none;cursor:pointer;background:${GR[th.length%3]}"></div><div style="flex:1;min-width:0"><div style="font-size:16px;line-height:1.4">${ti}</div>${sub}</div></div>`:`<div style="font-size:16px;line-height:1.5;margin-top:4px">${ti}</div>${sub}`}</div>`).join('')+`</div>`:'<div class="mut" style="text-align:center;padding:18px 0">暂无'+st.dtab+'记录</div>'}
   <div class="link" style="text-align:center;border-top:1px solid var(--line);padding-top:10px" data-act="toast" data-arg="${st.dtab==='交易'?'全部订单':'全部动态'}">${st.dtab==='交易'?'全部订单':'全部动态'} ›</div></div>
  <div class="card"><div class="ch"><b style="font-size:16px">归属信息</b></div>${[['客户渠道',first?'分享小程序':'小程序注册'],['由谁带来','小周 · 2024-03-18 首单'],['当前归属',c.o+' · 上海静安店'],['归属时间','2024-03-18']].map(r=>`<div class="fld" style="padding:9px 0"><span class="mut" style="flex:1;width:auto">${r[0]}</span><span>${r[1]}</span></div>`).join('')}<div class="link" style="text-align:right;padding-top:8px" data-act="toast" data-arg="更改归属【已有】">更改归属</div></div>
  <div class="card"><div class="ch"><b style="font-size:16px">粉丝权限</b></div><div class="fld" style="border:0;padding:4px 0"><span class="mut" style="flex:1;width:auto">当前设置</span><b>相册可见</b></div></div>
@@ -395,14 +407,35 @@ function vRec(){
  <div class="foot"><button class="btn grey" style="min-width:90px" data-act="rall">全选</button><button class="btn grey block" style="font-weight:600">已选 ${n} 款</button><button class="btn ${n?'':'disabled'}" style="flex:1.2" id="rsend" data-act="rsend">发微信推荐</button></div>`;
 }
 function vTasks(){
- const l=TASKS.filter(t=>st.tf==='全部'||t.t===st.tf);
+ const tab=st.ttab,sh=st.tstat||'todo';
+ const kc=k=>k==='发圈'?'b':'g';
+ let todo=[],done=[];
+ if(tab==='我执行'){
+  MOM.forEach(m=>(st.mdone[m.k]?done:todo).push({kind:'发圈',k:m.k,m,title:m.time+' '+m.t,sub:m.sub,time:'刚刚',res:'已发布'}));
+  ['c1','c2','c3','c4'].forEach(k=>(st.fdone[k]?done:todo).push({kind:'跟进',k,title:C[k].n,sub:C[k].r,time:'刚刚',res:'已跟进'}));
+  MSGS.forEach(m=>(st.mdone[m.k]?done:todo).push({kind:'群发',k:m.k,m,title:m.t,sub:m.sub,time:'刚刚',res:'已群发'}));
+  done=done.concat(DONE0);
+ }else if(tab==='我创建'){
+  CREATED.forEach((x,i)=>(x.done?done:todo).push({...x,i,res:'已完成'}));
+ }
+ const cnt=(arr,k)=>k==='全部'?arr.length:arr.filter(x=>x.kind===k).length;
+ const src=sh==='todo'?todo:done,l=src.filter(x=>st.tf==='全部'||x.kind===st.tf);
+ const td=tab==='团队'?Object.values(STAFF).reduce((a,d)=>a+d.u,0):todo.length,dn=tab==='团队'?Object.values(STAFF).reduce((a,d)=>a+d.today[0],0):done.length;
+ const tg=(k,n,c,t)=>`<div ${tab==='团队'?'':`id="ts-${k}" data-act="tstat" data-arg="${k}"`} style="${tab==='团队'?'':'cursor:pointer;'}padding:8px 4px;border-radius:10px;${tab!=='团队'&&sh===k?'background:'+(k==='todo'?'#FFF3E5':'#EAF7F0'):''}"><b style="font-size:26px;color:${c}">${n}</b><div class="sm mut">${t}</div></div>`;
+ const head=`<div class="card" style="padding:10px 12px"><div class="grid g2" style="text-align:center">${tg('todo',td,'var(--org)','待处理')}${tg('done',dn,'#07934B','已处理')}</div><div class="bar" style="margin-top:8px"><i style="width:${td+dn?dn/(td+dn)*100:0}%"></i></div></div>`;
+ const chips=tab==='团队'?'':`<div class="chips" style="margin-bottom:10px">${['全部','跟进','群发','发圈'].map(t=>`<span class="chip ${st.tf===t?'on':''}" id="tf-${t}" data-act="tf" data-arg="${t}">${t} ${cnt(src,t)}</span>`).join('')}</div>`;
+ const pics=m=>m.pics?`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px">${PICC.map((c,i)=>`<div style="height:58px;border-radius:8px;background:${c};${i===8?'color:#fff;font-weight:700;font-style:italic;display:flex;align-items:center;justify-content:center;font-size:18px':''}">${i===8?'+6':''}</div>`).join('')}</div>`:'';
+ const one=x=>{
+  if(sh==='done'||tab==='我创建'){
+   const isC=tab==='我创建';
+   return `<div class="card" style="padding:4px 14px"><div class="row" style="border:0"><div class="m" style="flex:1"><b>${x.title}</b> ${lab(x.kind,kc(x.kind))}${x.fresh?' '+lab('刚创建','o'):''}<div style="white-space:normal">${x.sub}${isC?' · 负责人 '+x.who:''}</div></div>${sh==='done'?`<div style="text-align:right"><span class="lab g">${x.res}</span><div class="sm mut" style="margin-top:3px">${x.time||''}</div></div>`:`<button class="btn sm ${x.u?'grey':'sec'}" id="urge2-${x.i}" data-act="urge2" data-arg="${x.i}">${x.u?'已催办':'催办'}</button>`}</div></div>`;
+  }
+  if(x.kind==='跟进'){const c=C[x.k],due=st.due&&x.k==='c1';return `<div class="card" style="padding:4px 14px"><div class="row click" id="tk-${x.k}" data-go="detail:${x.k}" style="border:0"><span style="width:7px;height:7px;border-radius:50%;background:${due?'var(--red)':'var(--org)'};flex:none"></span><div class="m" style="flex:1"><b style="font-size:16px">${c.n}</b> ${due?lab('到期提醒','r'):lab(c.opp,c.oc)}<div style="white-space:normal">${due?'跟进提醒：'+(st.rnote||'客户说过两天再看看'):c.r}</div></div><button class="btn sm" style="background:var(--g2);color:#07934B;font-weight:500">去跟进 ›</button></div></div>`}
+  if(x.kind==='群发'){const m=x.m;return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><b style="font-size:16px">${m.t}</b>${lab('待确认','o')}</div><div class="sm mut" style="margin:4px 0 10px">${m.sub}</div><div style="background:#F5F6F8;border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.6">${m.ai?'<span class="lab b">AI 生成</span> ':''}${m.txt} <span class="link" data-act="toast" data-arg="已复制文案">复制</span></div>${pics(m)}<div style="display:flex;justify-content:space-around;margin-top:12px"><button class="btn sm grey" data-act="medit">编辑</button><button class="btn sm" id="ms-${m.k}" data-act="msend" data-arg="${m.k}">确认群发</button></div></div>`}
+  const m=x.m;return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><b style="font-size:16px">${x.title}</b>${lab('待发','o')}</div><div class="sm mut" style="margin:4px 0 10px">${m.sub}</div><div class="grid g3">${m.cols.map(c=>`<div style="height:84px;border-radius:10px;background:${c}"></div>`).join('')}</div><div style="margin-top:12px"><button class="btn sm sec" id="mp-${m.k}" data-act="mpost" data-arg="${m.k}">一键发朋友圈</button></div></div>`};
+ const emp=Object.entries(STAFF).sort((a,b)=>b[1].u-a[1].u).map(([n,d],i)=>`<div class="card" style="padding:4px 14px"><div class="row click" data-act="emp" data-arg="${n}" style="border:0">${av(n,i,38)}<div class="m" style="flex:1"><b>${n}</b><div>今日已处理 ${d.today[0]} · 完成率 ${d.today[1]}% · 逾期 ${d.today[2]}</div></div><div style="text-align:center;margin-right:6px"><b style="font-size:20px;color:var(--org)">${d.u}</b><div class="sm mut" style="font-size:11px">待处理</div></div><button class="btn sm sec" id="nudge-${i}" data-act="nudge" data-arg="${n}">催办</button></div></div>`).join('');
  return hd('任务中心',{back:true})+`<div class="tabs">${['我执行','我创建','团队'].map(t=>`<button class="${st.ttab===t?'on':''}" data-act="ttab" data-arg="${t}">${t}</button>`).join('')}</div>
- <div class="body"><div class="chips" style="margin-bottom:10px">${['全部','发圈','群发','跟进'].map(t=>`<span class="chip ${st.tf===t?'on':''}" data-act="tf" data-arg="${t}">${t}</span>`).join('')}</div>
- ${l.map(t=>`<div class="card"><div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">${lab(t.t,t.t==='发圈'?'b':'g')}<b>${t.name}</b></div><div class="sm mut">${t.sub}</div>
-  <div style="display:flex;align-items:center;gap:10px;margin:10px 0"><div class="bar" style="flex:1"><i style="width:${t.p[0]/t.p[1]*100}%"></i></div><span class="sm">${t.p[0]} / ${t.p[1]}</span></div>
-  <div class="grid g5" style="text-align:center">${['已跟进','已触达','带来访客','下单','成交结果'].map((h,i)=>`<div><b style="font-size:14px">${t.m[i]}</b><div class="sm mut" style="font-size:11px">${h}</div></div>`).join('')}</div>
-  ${t.new?'<div class="sm" style="margin-top:8px;color:#07934B">刚创建 · 已进入你的待办</div>':''}</div>`).join('')}
- <div class="sm mut" style="text-align:center;padding:4px">带来访客：客户从导购链接进入即计入，之后下单、成交记入同一任务</div></div>
+ <div class="body">${head}${tab==='团队'?emp+'<div class="sm mut" style="text-align:center;padding:4px">按待处理数量从多到少，点员工看明细</div>':chips+(l.length?l.map(one).join(''):'<div class="mut" style="text-align:center;padding:26px 0">'+(sh==='todo'?'没有待处理的了':'还没有已处理的')+'</div>')}</div>
  <div class="foot"><button class="btn block" data-act="newtask">新建任务</button></div>`;
 }
 function vPerf(){
@@ -410,13 +443,65 @@ function vPerf(){
  const data=[['林悦',32800,41,46,88,1,9200],['陈小雨',27500,36,33,70,2,6100],['王浩',21300,30,28,64,3,4300],['张凯',12400,19,9,41,5,1800]];
  return hd('员工业绩')+`<div class="tabs">${[['perf','业绩'],['task','任务']].map(([k,t])=>`<button class="${st.ptab===k?'on':''}" data-act="ptab" data-arg="${k}">${t}${k==='task'?' <span class="lab g">新</span>':''}</button>`).join('')}</div>
  <div class="body"><div class="chips" style="margin-bottom:10px">${['今日','昨日','过去 7 日','本周','过去 30 日'].map(p=>`<span class="chip ${st.pper===p?'on':''}" data-act="pper" data-arg="${p}">${p}${p==='本周'?' ·新':''}</span>`).join('')}</div>
- <div class="card">${T?`<table class="t"><tr><th>员工</th><th>跟进客户</th><th>完成率</th><th>逾期</th><th>任务成交</th></tr>${data.map(d=>`<tr class="click" data-act="emp" data-arg="${d[0]}"><td><b>${d[0]}</b></td><td>${d[3]}</td><td>${d[4]}%</td><td style="${d[5]>2?'color:var(--red)':''}">${d[5]}</td><td>¥${d[6].toLocaleString()}</td></tr>`).join('')}</table>
+ <div class="card">${T?`<table class="t"><tr><th>员工</th><th>跟进</th><th>群发</th><th>发圈</th><th>完成率</th><th>逾期</th><th>任务成交</th></tr>${data.map(d=>`<tr class="click" data-act="emp" data-arg="${d[0]}"><td><b>${d[0]}</b></td><td>${d[3]}</td><td>${({林悦:12,陈小雨:10,王浩:8,张凯:2})[d[0]]}</td><td>${({林悦:9,陈小雨:8,王浩:5,张凯:1})[d[0]]}</td><td>${d[4]}%</td><td style="${d[5]>2?'color:var(--red)':''}">${d[5]}</td><td>¥${d[6].toLocaleString()}</td></tr>`).join('')}</table>
  <div class="sm mut" style="margin-top:8px">点员工看明细，含与经营概览同一份的“未跟进客户”。团队跟进统计已并入这里。</div>`:`<table class="t"><tr><th>员工</th><th>成交额</th><th>单数</th></tr>${data.map(d=>`<tr><td><b>${d[0]}</b></td><td>¥${d[1].toLocaleString()}</td><td>${d[2]}</td></tr>`).join('')}</table><div class="sm mut" style="margin-top:8px">现有业绩数据，不改动</div>`}</div>
  <div class="card row click" style="margin:0" data-act="toast" data-arg="离职交接【已有】"><div class="m"><b style="font-size:14px;font-weight:500">离职员工有 2 个客户待继承</b></div><span class="mut">›</span></div></div>`;
 }
 const EI={林悦:'林悦：跟进 412 位，响应率 58%，成交 102 位，转化 24.8%。高意向和复购跟进做得最扎实。',陈小雨:'陈小雨：跟进 386 位，响应率 56%，成交 96 位，转化 24.9%。节奏稳定。',王浩:'王浩：跟进 358 位，响应率 37%，成交 79 位，转化率 22.1%，但成交金额最高 ¥208,000（客单价约 ¥2,600）。适合多分配高价值客户。',张凯:'张凯：跟进只有 80 位，响应 20%，成交 10 位，转化 12.5%。需要店长介入，或把未跟进客户转派。'};
 const LI={高意向:'高意向：跟进 126 位，成交 22 位，转化 17.5%，金额 ¥48,600。客单价高，值得优先跟。',复购与关联:'复购与关联：跟进 342 位，成交 89 位，转化 26.0%，金额 ¥62,400。稳定的成交来源。',上新到货:'上新到货：跟进 613 位，成交 129 位，转化 21.0%，金额 ¥71,800，是成交最多的机会。建议保持“上新自动建任务”开启。',节点关怀:'节点关怀：跟进 158 位，成交 61 位，转化 38.6%，是转化率最高的机会。',流失召回:'流失召回：跟进 894 位，只成交 18 位，转化 2.0%。建议调整阈值或话术。'};
+
+
+function funnelData(){
+ const B=[6842,3421,1595,1024],TM={'今天':.035,'近7天':.24,'近30天':1,'近90天':2.9};
+ const TY={全部:1,新客:.34,老客:.66},TC={全部:1,新客:.82,老客:1.1};
+ const SRC={朋友圈:[.34,1.12],小程序:[.27,.95],微信聊天:[.21,1.08],APP:[.12,.8],H5:[.06,.7]};
+ const calc=(src)=>{const sh=src?SRC[src][0]:1,cm=(src?SRC[src][1]:1)*TC[st.fk];
+  const br=Math.round(B[0]*TY[st.fk]*TM[st.ft]*sh);const out=[br];
+  for(let i=1;i<4;i++){const r=B[i]/B[0]*(i===1?Math.pow(cm,.5):cm);out.push(Math.min(out[i-1],Math.round(br*Math.min(r,B[i-1]/B[0]*1.0+1))));}
+  return out};
+ const cur=calc(st.fsr==='全部'?null:st.fsr);
+ const src=Object.keys(SRC).map(k=>{const v=calc(k);return [k,SRC[k][0],v[3]/Math.max(v[0],1)]});
+ return {cur,src};
+}
+function vFunnel(){
+ const {cur,src}=funnelData(),N=['浏览','加购 / 收藏','下单','支付'],W=cur.map(v=>cur[0]?v/cur[0]*100:0);
+ const grp=(lab,key,opts)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span class="sm mut" style="width:56px;flex:none">${lab}</span><div class="chips" style="gap:6px;overflow-x:auto;flex-wrap:nowrap">${opts.map(o=>`<span class="chip ${st[key]===o?'on':''}" id="f-${key}-${o}" data-act="fset" data-arg="${key}|${o}" style="height:30px;white-space:nowrap;padding:0 12px">${o}</span>`).join('')}</div></div>`;
+ const loss=cur.map((v,i)=>i?cur[i-1]-v:0),worst=loss.indexOf(Math.max(...loss.slice(1)));
+ const pc=v=>(v*100).toFixed(1)+'%',cols=['#0E9F5F','#2DB574','#5CC896','#8FD9B7'];
+ const seg=cur.map((v,i)=>{const a=(100-Math.max(W[i],6))/2,b=i<3?(100-Math.max(W[i+1],6))/2:a+Math.max(W[i],6)*.12,step=i&&cur[i-1]?v/cur[i-1]:null;
+  return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px"><div style="width:78px;flex:none"><div class="sm mut">${N[i]}</div><b style="font-size:17px">${v.toLocaleString()}</b></div>
+  <div style="flex:1;height:58px;background:${cols[i]};clip-path:polygon(${a}% 0,${100-a}% 0,${100-b}% 100%,${b}% 100%)"></div>
+  <div style="width:84px;flex:none;text-align:right;font-size:12px;line-height:1.5"><div class="mut">占浏览 ${pc(cur[0]?v/cur[0]:0)}</div>${step!==null?`<div style="font-weight:600">较上一步 ${pc(step)}</div>`:'<div class="mut">基准</div>'}${i&&i===worst?`<div style="color:#C66A0C;font-weight:600">流失最多 ${loss[i].toLocaleString()}</div>`:''}</div></div>`}).join('');
+ const mx=Math.max(...src.map(x=>x[1]));
+ return hd('转化漏斗',{r:'<span class="link" data-act="toast" data-arg="导出">导出</span>'})+`<div class="body">
+ <div class="card"><div class="ch"><b style="font-size:16px">筛选</b></div>${grp('客户类型','fk',['全部','新客','老客'])}${grp('时间','ft',['近30天','今天','近7天','近90天'])}${grp('来源','fsr',['全部','朋友圈','小程序','微信聊天','APP','H5'])}</div>
+ <div class="card"><div class="ch"><b style="font-size:16px">转化漏斗</b><span class="sm mut">${st.fk} · ${st.ft} · ${st.fsr}</span></div>${seg}
+  <div style="background:#F8FAF9;border-radius:10px;padding:10px 12px;margin-top:10px;font-size:13px;line-height:1.7">整体转化率 <b>${pc(cur[0]?cur[3]/cur[0]:0)}</b>（浏览 → 支付）。${worst>0?`最大的流失在「${N[worst-1]} → ${N[worst]}」，流失 ${loss[worst].toLocaleString()} 人。`:''} <span class="link" data-go="opplist">去看加购未下单的客户 ›</span></div></div>
+ <div class="card"><div class="ch"><b style="font-size:16px">来源分布</b><span class="sm mut">浏览占比 · 整体转化率</span></div>${src.map(([k,s,c])=>`<div class="row click" id="src-${k}" data-act="fset" data-arg="fsr|${st.fsr===k?'全部':k}" style="${st.fsr===k?'background:var(--g2);border-radius:8px;padding-left:6px;padding-right:6px':''}"><span style="width:62px;font-size:14px">${k}</span><div class="bar" style="flex:1;height:10px"><i style="width:${s/mx*100}%"></i></div><span style="width:36px;text-align:right;font-size:13px">${Math.round(s*100)}%</span><b style="width:50px;text-align:right;font-size:13px">${pc(c)}</b></div>`).join('')}<div class="sm mut" style="margin-top:6px">点来源可只看这个来源的漏斗；朋友圈指从朋友圈里的小程序链接 / 小程序码进入</div></div></div>`;
+}
+const GF={cols:['发送','进入','下单','转化率','金额'],den:0,first:'消息',dims:{消息:[['推送上新 · 秋季新品',4210,512,61,21400],['生日关怀 · 生日券',158,52,21,9800],['冬季针织到货',612,98,17,6900],['沉睡客户唤醒 · 老客券',230,37,9,3120],['羊毛大衣上新 · 老客群发',96,23,4,5280]],人群:[['全部客户',4210,512,61,21400],['老客',708,121,25,12080],['生日客户',158,52,21,9800],['沉睡客户',230,37,9,3120]],员工:[['林悦',1480,196,31,12800],['陈小雨',1302,168,26,10400],['王浩',1120,142,22,9900],['张凯',250,18,4,1900]]}};
+const GQ={cols:['发布','进入','下单','转化率','金额'],den:1,first:'内容',dims:{内容:[['买家秀 · 碎花连衣裙',8,142,21,9800],['秋冬新品朋友圈',8,126,16,8640],['羊毛大衣上新',6,88,9,5400],['限时折扣 · 针织',5,64,5,1900],['早安 · 日常',20,31,1,299]],类型:[['买家秀',14,260,38,16600],['上新',14,214,25,14040],['促销',5,64,5,1900],['日常',20,31,1,299]],员工:[['林悦',22,176,26,12100],['陈小雨',18,141,19,9200],['王浩',10,88,10,4100],['张凯',3,12,1,520]]}};
+const money=v=>v>=10000?'¥'+(v/10000).toFixed(1)+'万':'¥'+v.toLocaleString();
+function anaTabs(){return `<div class="tabs">${['跟进','群发','发圈'].map(t=>`<button id="at-${t}" class="${st.atab===t?'on':''}" data-act="atab" data-arg="${t}">${t}</button>`).join('')}</div>`}
+function vAnaOther(){
+ const g=st.atab==='群发',D=g?GF:GQ,dims=Object.keys(D.dims),dim=st.adim[st.atab]&&D.dims[st.adim[st.atab]]?st.adim[st.atab]:D.first;
+ const key=(g?'gf':'gq')+'-'+dim,s=st.sort[key]||[-1,0],ci=s[0],pc=v=>(v*100).toFixed(1)+'%';
+ const den=r=>D.den?r[2]:r[1];
+ let r=D.dims[dim].map(e=>[e[0],e[1],e[2],e[3],e[3]/den(e),e[4]]);
+ if(ci>0)r=r.slice().sort((a,b)=>(a[ci]-b[ci])*s[1]);
+ const m=D.dims[D.first],sa=m.reduce((a,e)=>a+e[1],0),sb=m.reduce((a,e)=>a+e[2],0),sc=m.reduce((a,e)=>a+e[3],0),sm=m.reduce((a,e)=>a+e[4],0);
+ const kpi=g?[[money(sm),'影响交易金额'],['96.8%','触达率'],[pc(sb/sa),'进入率（进入 / 发送）'],[pc(sc/sa),'转化率（下单 / 发送）']]:[[money(sm),'影响交易金额'],[sa+' 人次','发布'],[sb.toLocaleString(),'带来访客'],[pc(sc/sb),'转化率（下单 / 进入）']];
+ const head=`<tr><th>${dim}</th>${D.cols.map((c,i)=>`<th id="th-${key}-${i+1}" data-act="sort" data-arg="${key}|${i+1}" style="cursor:pointer;white-space:nowrap;color:${ci===i+1?'var(--ink)':'var(--mut)'}">${c}<span style="font-size:9px;margin-left:1px">${ci===i+1?(s[1]>0?'▲':'▼'):'⇅'}</span></th>`).join('')}</tr>`;
+ const low=g?.03:.08;
+ const note=g?['「生日关怀 · 生日券」转化率最高（13.3%），建议保持节点关怀类群发开启。','「推送上新」覆盖人群最广，但转化仅 1.4%，建议改用“推荐感兴趣的人”缩小人群再推。','张凯本月群发仅覆盖 250 人，明显低于其他人，建议确认他是否按时处理群发待办。']:['买家秀类朋友圈带来的访客下单率最高（14.6%），建议每周至少发 2 条。','日常类（早安等）发得最多（20 人次），但下单率只有 3.2%，可以少发或配上商品小程序码。','张凯本月只发布了 3 条朋友圈，建议提醒他处理发圈待办。'];
+ return hd('经营效果复盘',{r:'<span class="link" data-act="toast" data-arg="导出">导出</span>'})+anaTabs()+`<div class="body"><div class="chips" style="margin-bottom:10px">${['本周','近 30 天','近 90 天','自定义 ▾'].map((p,i)=>`<span class="chip ${i===1?'on':''}" style="${i===1?'border:1.5px solid var(--g)':''}">${p}</span>`).join('')}</div>
+ <div class="card"><div class="ch"><b>${st.atab}效果</b><span class="sm mut">10-19 ~ 11-18</span></div><div class="grid g2">${kpi.map(x=>`<div style="background:#F8FAF9;border-radius:10px;padding:12px"><b style="font-size:21px">${x[0]}</b><div class="sm mut">${x[1]}</div></div>`).join('')}</div></div>
+ <div class="card"><div class="ch"><b>按${dim}看</b><span class="sm mut">点表头排序</span></div><div class="chips" style="margin-bottom:8px">${dims.map(d=>`<span class="chip ${dim===d?'on':''}" id="ad-${d}" data-act="adim" data-arg="${d}" style="height:30px">${d}</span>`).join('')}</div><table class="t" style="font-size:12.5px">${head}${r.map(e=>`<tr><td>${e[0]}</td><td>${e[1].toLocaleString()}</td><td>${e[2].toLocaleString()}</td><td>${e[3]}</td><td ${e[4]<low?'style="color:var(--red);font-weight:600"':''}>${pc(e[4])}</td><td>¥${e[5].toLocaleString()}</td></tr>`).join('')}</table></div>
+ <div class="card"><div class="ch"><b>结论与建议</b><span class="sm mut">自动生成</span></div><div style="background:#F8FAF9;border-radius:10px;padding:12px;font-size:13px;color:#4E5969;line-height:1.7">${note.map((t,i)=>(i+1)+'. '+t).join('<br>')}</div></div>
+ <div class="sm mut" style="line-height:1.6;padding:0 4px">计入口径：客户从导购链接、商品卡片${g?'':'或朋友圈里的小程序链接 / 小程序码'}进入，之后下单，记给<b>最近一次触达</b>的那个动作，一笔订单只记一次，所以跟进、群发、发圈三项金额相加不会重复。${g?'':'朋友圈没有曝光数据，转化率按“进入”计算。'}</div></div>`;
+}
 function vAnalysis(){
+ if(st.atab!=='跟进')return vAnaOther();
  const emp=[['林悦',412,240,102,148600],['陈小雨',386,216,96,126800],['王浩',358,132,79,208000],['张凯',80,16,10,18600]];
  const lay=[['高意向',126,68,22,48600],['复购与关联',342,196,89,62400],['上新到货',613,382,129,71800],['节点关怀',158,96,61,28600],['流失召回',894,142,18,9200]];
  const sc=[['看款未成交话术','58%','26%'],['新客欢迎话术','62%','21%'],['生日关怀话术','44%','19%'],['首单复购话术','51%','14%'],['流失召回话术','22%','6%']];
@@ -427,7 +512,7 @@ function vAnalysis(){
   const head=`<tr><th>${key==='emp'?'员工':'分层'}</th>${cols.map((c,i)=>`<th id="th-${key}-${i+1}" data-act="sort" data-arg="${key}|${i+1}" style="cursor:pointer;white-space:nowrap;color:${ci===i+1?'var(--ink)':'var(--mut)'}">${c}<span style="font-size:9px;margin-left:1px">${ci===i+1?(s[1]>0?'▲':'▼'):'⇅'}</span></th>`).join('')}</tr>`;
   return {head,r}};
  const E=mk('emp',emp),L=mk('lay',lay),pc=v=>(v*100).toFixed(1)+'%';
- return hd('跟进效果复盘',{r:'<span class="link" data-act="toast" data-arg="导出">导出</span>'})+`<div class="body"><div class="chips" style="margin-bottom:10px">${['本周','近 30 天','近 90 天','自定义 ▾'].map((p,i)=>`<span class="chip ${i===1?'on':''}" style="${i===1?'border:1.5px solid var(--g)':''}">${p}</span>`).join('')}</div>
+ return hd('经营效果复盘',{r:'<span class="link" data-act="toast" data-arg="导出">导出</span>'})+anaTabs()+`<div class="body"><div class="chips" style="margin-bottom:10px">${['本周','近 30 天','近 90 天','自定义 ▾'].map((p,i)=>`<span class="chip ${i===1?'on':''}" style="${i===1?'border:1.5px solid var(--g)':''}">${p}</span>`).join('')}</div>
  <div class="card"><div class="ch"><b>跟进效果</b><span class="sm mut">10-19 ~ 11-18</span></div>
   <div class="grid g2">${[['¥86.4万','影响交易金额'],['23.2%','机会 → 成交 ↑3.1%'],['65.6%','客户响应率'],['56.8%','成交客户复购率']].map(x=>`<div style="background:#F8FAF9;border-radius:10px;padding:12px"><b style="font-size:21px">${x[0]}</b><div class="sm mut">${x[1]}</div></div>`).join('')}</div></div>
  <div class="card"><div class="ch"><b>员工跟进分析</b></div><table class="t" style="font-size:12.5px">${E.head}${E.r.map(e=>`<tr class="click" id="emp-${e[0]}" data-act="aemp" data-arg="${e[0]}" style="${st.aemp===e[0]?'background:var(--g2)':''}"><td>${e[0]}</td><td>${e[1]}</td><td>${e[2]}</td><td>${e[3]}</td><td ${e[4]<.15?'style="color:var(--red);font-weight:600"':''}>${pc(e[4])}</td><td>¥${e[5].toLocaleString()}</td></tr>`).join('')}</table>${st.aemp?`<div style="background:#F8FAF9;border-radius:8px;padding:10px;margin-top:8px;font-size:13px;line-height:1.6">${EI[st.aemp]}</div>`:'<div class="sm mut" style="margin-top:8px">点员工看他的跟进是否有效</div>'}</div>
@@ -545,7 +630,7 @@ function vPushconfirm(){
 function vWechat(){
  return `<div class="hd wxh" style="background:#EDEDED"><span class="bk"></span><div class="t">微信</div><div class="r"></div></div><div class="body wxh" style="background:#EDEDED;text-align:center;padding-top:80px"><div style="width:64px;height:64px;border-radius:50%;background:var(--g);color:#fff;display:grid;place-items:center;margin:0 auto 14px;font-size:28px">✓</div><b style="font-size:17px">任务已生成</b><div class="sm mut" style="margin:6px 0 20px">已进入现有“半自动发送”，到这里原型结束</div><button class="btn" data-act="home">回到经营概览</button></div>`;
 }
-const VIEWS={wardrobe:vWardrobe,order:vOrder,rec:vRec,overview:vOverview,opplist:vOpp,overdue:vOverdue,team:vTeam,customers:vCustomers,detail:vDetail,tasks:vTasks,perf:vPerf,analysis:vAnalysis,settings:vSettings,chat:vChat,product:vProduct,pushpick:vPushpick,pushcust:vPushcust,pushconfirm:vPushconfirm,wechat:vWechat};
+const VIEWS={funnel:vFunnel,wardrobe:vWardrobe,order:vOrder,rec:vRec,overview:vOverview,opplist:vOpp,overdue:vOverdue,team:vTeam,customers:vCustomers,detail:vDetail,tasks:vTasks,perf:vPerf,analysis:vAnalysis,settings:vSettings,chat:vChat,product:vProduct,pushpick:vPushpick,pushcust:vPushcust,pushconfirm:vPushconfirm,wechat:vWechat};
 
 /* engine */
 function openCreate(){const g=[['风格',['通勤','休闲','甜美']],['尺码',['S','M','L']],['预算',['500以下','500-1000','1000以上']]];sheet('快速建档',`<div class="fld"><span class="mut">昵称</span><span>林小夏（取自微信）</span></div><div class="fld"><span class="mut">来源</span><span>微信聊天 · 归属 林悦</span></div><div class="mut sm" style="margin:10px 0 4px">她说的需求（点选，会存成标签）</div>${g.map(([k,o])=>`<div style="display:flex;gap:8px;align-items:center;margin:6px 0"><span class="mut" style="width:36px">${k}</span><div class="chips">${o.map(x=>`<span class="chip ${st.need[k]===x?'on':''}" data-act="need" data-arg="${k}|${x}">${x}</span>`).join('')}</div></div>`).join('')}`,'保存并建档',()=>{st.kid=1;st.kb='card';ev('create');render();toast('已建档，需求已存成标签')})}
@@ -602,7 +687,7 @@ function openAssign(){
  const chip=(g,a,t)=>`<span class="chip ${st[g]===a?'on':''}" id="${g}-${a}" data-act="${g}" data-arg="${a}">${t}</span>`;
  const body=`<div class="mut sm" style="margin-bottom:6px">${n} 位客户</div><div class="mut sm" style="margin-bottom:6px">任务类型</div><div class="chips" style="margin-bottom:12px">${chip('atype','跟进','跟进')}${chip('atype','群发','群发')}</div><div class="mut sm" style="margin-bottom:6px">执行人</div><div class="chips" style="margin-bottom:10px">${chip('amode','own','按客户归属分配')}${chip('amode','pick','指定员工')}</div>`
   +(own?`<div style="background:#F5F6F8;border-radius:8px;padding:10px;font-size:13px;line-height:1.6">每位客户交给自己的归属导购，各自收到一条任务。<br><b>${sum||'暂无'}</b>${nob?`<br><span style="color:var(--red)">另有 ${nob} 位没有归属导购，请改用“指定员工”</span>`:''}</div>`:staffPick(picked));
- sheet('分配任务',body,'确认发布',()=>{ev('pub');const who=own?(sum||'归属导购'):picked;TASKS.unshift({t:st.atype,name:(st.cf==='全部'?'':st.cf+' · ')+'店长分配',sub:n+' 位客户 · '+(own?'按归属分配 '+Object.keys(by).join('、'):'执行人 '+picked)+' · 刚创建',p:[0,n],m:[0,0,0,0,'¥0'],new:1});st.batch=false;st.sel={};st.tf='全部';st.ttab='团队';toast(own?'已发布，各归属导购收到待办':'已发布，'+picked+' 收到待办');nav('tasks')});
+ sheet('分配任务',body,'确认发布',()=>{ev('pub');const who=own?(sum||'归属导购'):picked;TASKS.unshift({t:st.atype,name:(st.cf==='全部'?'':st.cf+' · ')+'店长分配',sub:n+' 位客户 · '+(own?'按归属分配 '+Object.keys(by).join('、'):'执行人 '+picked)+' · 刚创建',p:[0,n],m:[0,0,0,0,'¥0'],new:1});if(st.atype==='跟进'){ks.forEach(k=>{const c=C[k];CREATED.unshift({kind:'跟进',title:c.n,sub:c.opp?c.opp+' · '+c.r:c.r,who:own?(c.o==='无归属'?'待指定':c.o):picked,done:0,fresh:1})})}else{(own?Object.entries(by):[[picked,n]]).forEach(([o,x])=>CREATED.unshift({kind:'群发',title:'群发 · '+x+' 位客户',sub:(st.cf==='全部'?'':st.cf+' · ')+'店长分配',who:o,done:0,fresh:1}))}st.batch=false;st.sel={};st.tf='全部';st.tstat='todo';st.ttab='我创建';toast(own?'已发布，各归属导购收到待办':'已发布，'+picked+' 收到待办');nav('tasks')});
 }
 const A={
  recpage:()=>{ev('recpage');nav('rec')},rsel:a=>{st.rsel[a]=!st.rsel[a];render()},rall:()=>{const ks=['A102','C201','B015','D088','E033','C305','F012','G220','H118'];const all=ks.every(k=>st.rsel[k]);ks.forEach(k=>st.rsel[k]=!all);render()},rsend:()=>{if(!Object.values(st.rsel).some(Boolean)){toast('先勾选要推荐的款');return}ev('rsend');st.fdone[st.cid||'c1']=1;toast('已进入微信发送，记入跟进记录，今日待办已处理');nav('overview',1)},
@@ -610,10 +695,10 @@ const A={
  back,stop(){},toast:a=>toast(a),
  page:a=>{st.scen=null;st.done={};nav(a,1)},
  home:()=>{nav('overview',1)},
- scen:a=>{const S=SCEN[a];st.chat=S.chat||'c1';st.msg=S.msg||'';st.remind=a==='S6'?'':'明天 10:00 跟进';st.rnote='';st.rd='后天 10:00';st.fdone={};st.due=0;st.urged={};st.cf='全部';st.batch=false;st.sel={};st.alay=null;st.aemp=null;st.gsel={};st.sentSet=0;st.rsel={A102:1,C201:1,B015:1,D088:1,E033:1};st.need={风格:'通勤',尺码:'M',预算:'500-1000'};ORPH.forEach(k=>C[k].o='无归属');TASKS.length=0;TASKS.push(...TASKS0);st.scen=a;st.done={};st.seg='mine';st.per='today';st.kb='search';st.kid=0;st.sent=false;st.color=null;st.fromChat=false;st.psel={};st.pm='all';st.pmt='all';st.dtab='全部';st.sort={};st.pn='';st.pprod=null;st.uSel={};st.uBatch=false;nav(SCEN[a].start,1)},
+ scen:a=>{const S=SCEN[a];st.chat=S.chat||'c1';st.msg=S.msg||'';st.remind=a==='S6'?'':'明天 10:00 跟进';st.rnote='';st.rd='后天 10:00';st.fdone={};st.mdone={};st.tstat='todo';st.tf='全部';st.ttab='我执行';st.atab='跟进';st.adim={};st.fk='全部';st.ft='近30天';st.fsr='全部';CREATED.length=0;CREATED.push(...CREATED0.map(x=>({...x})));st.due=0;st.urged={};st.cf='全部';st.batch=false;st.sel={};st.alay=null;st.aemp=null;st.gsel={};st.sentSet=0;st.rsel={A102:1,C201:1,B015:1,D088:1,E033:1};st.need={风格:'通勤',尺码:'M',预算:'500-1000'};ORPH.forEach(k=>C[k].o='无归属');TASKS.length=0;TASKS.push(...TASKS0);st.scen=a;st.done={};st.seg='mine';st.per='today';st.kb='search';st.kid=0;st.sent=false;st.color=null;st.fromChat=false;st.psel={};st.pm='all';st.pmt='all';st.dtab='全部';st.sort={};st.pn='';st.pprod=null;st.uSel={};st.uBatch=false;nav(SCEN[a].start,1)},
  seg:a=>{st.seg=a;if(a==='team')ev('team');render()},
  per:a=>{st.per=a;if(a==='week')ev('week');render()},
- opp:a=>{st.tf='跟进';nav('tasks')},
+ opp:a=>{st.tf='跟进';st.tstat='todo';st.ttab='我执行';nav('tasks')},
  emp:a=>{if(a==='张凯'){ev('emp');nav('team')}else toast(a+' 的明细：含未跟进客户列表')},
  ubatch:()=>{st.uBatch=!st.uBatch;st.uSel={};render()},
  usel:a=>{st.uSel[a]=!st.uSel[a];render()},
@@ -625,7 +710,11 @@ const A={
  assign:()=>{ev('assign');picked='林悦';st.atype='跟进';st.amode='own';openAssign()},
  amode:a=>{st.amode=a;openAssign()},
  assign1:()=>sheet('创建跟进任务','<div class="mut sm" style="margin-bottom:6px">执行人</div>'+staffPick('林悦'),'确认发布',()=>toast('已创建，进入待办')),
- ttab:a=>{st.ttab=a;render()},tf:a=>{st.tf=a;render()},
+ ttab:a=>{st.ttab=a;st.tf='全部';st.tstat='todo';render()},tf:a=>{st.tf=a;render()},tstat:a=>{st.tstat=a;st.tf='全部';render()},
+ msend:a=>{st.mdone[a]=1;ev('msend');toast('已确认群发，按频控半自动发出');render()},mpost:a=>{st.mdone[a]=1;ev('mpost');toast('已发布到朋友圈');render()},medit:()=>toast('编辑群发文案'),
+ fset:a=>{const [k,v]=a.split('|');st[k]=v;render()},atab:a=>{st.atab=a;ev('atab:'+a);render()},adim:a=>{st.adim[st.atab]=a;render()},toana:a=>{st.atab=a;ev('go:analysis');nav('analysis')},
+ urge2:a=>{CREATED[a].u=1;toast('已提醒'+CREATED[a].who);render()},nudge:a=>{toast('已提醒'+a+'处理待办');},
+
  newtask:()=>sheet('新建任务','<div class="opt on"><b>发圈</b><span class="sm mut">已有</span></div><div class="opt"><b>群发</b><span class="sm mut">新增 · 半自动发送</span></div><div class="opt"><b>跟进</b><span class="sm mut">新增 · 以客户为单位</span></div><div class="sm mut">自动创建在基础设置按机会类型开关</div>','下一步',()=>toast('设置主题、内容、客户范围、时段，再分配执行人')),
  ptab:a=>{st.ptab=a;render()},pper:a=>{st.pper=a;render()},
  auto:a=>{st.auto[a]=st.auto[a]?0:1;render()},
@@ -658,7 +747,7 @@ document.addEventListener('click',e=>{
  const el=e.target.closest('[data-act],[data-go]'); if(!el)return;
  const act=el.dataset.act,g=el.dataset.go;
  if(act&&A[act])A[act](el.dataset.arg);
- if(g){ev('go:'+g);const [id,arg]=g.split(':');if(arg)st.cid=arg;if(id==='tasks')st.tf='全部';nav(id)}
+ if(g){ev('go:'+g);const [id,arg]=g.split(':');if(arg)st.cid=arg;if(id==='analysis')st.atab='跟进';if(id==='tasks'){st.tf='全部';st.tstat='todo';st.ttab='我执行'}nav(id)}
 });
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList.contains('sw')){e.preventDefault();e.target.click()}});
 $('#phone').addEventListener('click',()=>{});
