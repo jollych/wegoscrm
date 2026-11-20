@@ -73,7 +73,9 @@ iframe.active { visibility: visible; pointer-events: auto; }
     if (VIEWS.indexOf(view) === -1) view = 'proto';
     tabs.forEach(function (t) { t.classList.toggle('active', t.dataset.view === view); });
     frames.forEach(function (f) { f.classList.toggle('active', f.id === view); });
-    if (location.hash !== '#' + view) history.replaceState(null, '', '#' + view);
+    try {
+      if (location.hash !== '#' + view) history.replaceState(null, '', '#' + view);
+    } catch (e) { /* 预览环境（沙箱 iframe）不允许改地址栏，忽略即可 */ }
   }
 
   tabs.forEach(function (t) {

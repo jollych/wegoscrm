@@ -224,7 +224,7 @@ const CREATED=CREATED0.map(x=>({...x}));
 const ORPH=['c14','c15','c16','c17','c18'];
 const ODT=[['斯乔一','高意向客户跟进','5 位客户','逾期 3 天'],['斯乔一','流失召回跟进','3 位客户','逾期 2 天'],['风风疯疯','上新到货群发','4 位客户','逾期 2 天'],['yuanzx','高意向客户跟进','2 位客户','逾期 1 天'],['风风疯疯','节点关怀跟进','1 位客户','逾期 1 天'],['Jolly','复购跟进','1 位客户','逾期 1 天']];
 const DIST={生命周期:[['未成交',1168,'+3%'],['新客',386,'-34%'],['老客',4102,'+16%'],['预流失',302,'+75%'],['流失',1201,'+1%']],客户价值:[['高价值',820,'+8%'],['中价值',2960,'+2%'],['低价值',4862,'-1%']],客户渠道:[['小程序',4210,'+9%'],['扫码',2630,'+4%'],['导入',1802,'0%']],所属导购:[['Jolly',2640,'+3%'],['yuanzx',2310,'+5%'],['风风疯疯',2105,'+2%'],['斯乔一',1587,'-6%']],商品偏好:[['连衣裙',2100,'+6%'],['风衣',1620,'+12%'],['针织',1480,'+4%']]};
-const st={dist:'生命周期',gsel:{},rsel:{A102:1,C201:1,B015:1,D088:1,E033:1},scen:null,done:{},cur:'overview',hist:[],seg:'mine',per:'today',ptab:'perf',pper:'week',oppf:'全部',cf:'全部',sk:'最近消费',sortOpen:0,fopen:0,fa:{},fd:{},ftc:0,batch:false,sel:{},kb:'search',sent:false,sentSet:0,chat:'c1',msg:'',remind:'明天 10:00 跟进',rnote:'',rd:'后天 10:00',fdone:{},due:0,urged:{},alay:null,aemp:null,need:{风格:'通勤',尺码:'M',预算:'500-1000'},phone:'',bd:{y:'',m:'',d:''},color:null,fromChat:false,pprod:null,psel:{},pm:'all',pmt:'all',dtab:'全部',oid:'o1',sort:{},atype:'跟进',amode:'own',ttype:'跟进',ttab:'我执行',tf:'全部',tstat:'todo',mdone:{},fk:'全部',ft:'近30天',fsr:'全部',atab:'跟进',adim:{},uSel:{},uBatch:false,auto:{高意向:1,'复购与关联':1,上新到货:0,节点关怀:1,流失召回:0,高价值客户:0,新客待培育:0,高价值预流失:0,权益即将到期:0,高频低客单:0,低频高客单:0},wmode:0,wsel:{},wpick:[],cr:{},ptk:'ov',pback:'card',ptask:null,bn:0,bnx:0,rup:'11-17 18:20',cre:null,role:'mgr'};
+const st={dist:'生命周期',gsel:{},rsel:{A102:1,C201:1,B015:1,D088:1,E033:1},scen:null,done:{},cur:'overview',hist:[],seg:'mine',per:'today',ptab:'perf',pper:'week',oppf:'全部',cf:'全部',sk:'最近消费',sortOpen:0,fopen:0,fa:{},fd:{},ftc:0,batch:false,sel:{},kb:'search',sent:false,sentSet:0,chat:'c1',msg:'',remind:'明天 10:00 跟进',rnote:'',rd:'后天 10:00',fdone:{},due:0,urged:{},alay:null,aemp:null,need:{风格:'通勤',尺码:'M',预算:'500-1000'},phone:'',bd:{y:'',m:'',d:''},color:null,fromChat:false,pprod:null,psel:{},pm:'all',pmt:'all',dtab:'全部',oid:'o1',sort:{},atype:'跟进',amode:'own',ttype:'跟进',ttab:'我执行',tf:'全部',tstat:'todo',mdone:{},fk:'全部',ft:'近30天',fsr:'全部',atab:'跟进',adim:{},uSel:{},uBatch:false,auto:{高意向:1,'复购与关联':1,上新到货:0,节点关怀:1,流失召回:0,高价值客户:0,新客待培育:0,高价值预流失:0,权益即将到期:0,高频低客单:0,低频高客单:0},wmode:0,wsel:{},wpick:[],cr:{},ptk:'ov',pback:'card',ptask:null,bn:0,bnx:0,rup:'11-17 18:20',cre:null,role:'mgr',bm:'img',bf:'全部',bdel:{},bfix:{},bdup:'merge',bown:'col'};
 const SCEN={
 S1:{star:1,title:'S1 导购：新客接待',short:'新客第一次看款，快速建档、推荐商品',goal:'新客林小夏第一次来看款并在微信里问话。快速建档、记下她的需求，再按需求推荐商品。',start:'chat',chat:'c13',steps:[
  {k:'kbpick',t:'输入法识别出这是新朋友，点输入框上方“林小夏 · 新客，点此建档”',sel:'#kb-pick'},
@@ -297,7 +297,23 @@ X3:{title:'补充 · 谁跟进最少',short:'按导购看未跟进客户',goal:'
  {k:'team',t:'在“今日待办”切到“团队待办”',sel:'#seg-team'},
  {k:'week',t:'时间选“本周”，跟进最少的排在最前',sel:'#per-week'},
  {k:'emp',t:'点排在最前的员工',sel:'#team tr.click'},
- {k:'act',t:'对未跟进客户“一键提醒”，或勾选后“批量重新分配”',sel:'#remind'}]}};
+ {k:'act',t:'对未跟进客户“一键提醒”，或勾选后“批量重新分配”',sel:'#remind'}]},
+X4:{title:'补充 · 新增客户：单个录入',short:'手工新建一位客户',goal:'接待时临时要建一位客户，填备注和手机号，保存即可。',start:'overview',steps:[
+ {k:'addc',t:'点右上角“新增客户”图标',sel:'#hd-add'},
+ {k:'add:one',t:'选“单个录入”',sel:'#add-one'},
+ {k:'afill',t:'填写客户备注和手机号',sel:'#an',btn:['afill','自动填写示例']},
+ {k:'aone',t:'点“保存”，回到上一页',sel:'#aone-ok'}]},
+X5:{title:'补充 · 新增客户：批量上传',short:'上传历史客户，识别后确认再导入',goal:'把老名单（图片、表格、文字）一次导进来，先预览确认，再入库。',start:'overview',steps:[
+ {k:'addc',t:'点右上角“新增客户”图标',sel:'#hd-add'},
+ {k:'add:bulk',t:'选“批量上传”',sel:'#add-bulk'},
+ {k:'bgo',t:'选图片 / 表格 / 文字上传，点“开始识别”',sel:'#bulk-go'},
+ {k:'bfix',t:'存疑的记录先“修改”，缺手机号的标“待补全”，重复的选合并或跳过',sel:'[data-act="bfix"]'},
+ {k:'bimp',t:'点“确认导入”',sel:'#bimp'},
+ {k:'bdqr',t:'导入的客户是“未绑定”，点“发起扫码邀请”',sel:'#bd-qr'}]},
+X6:{title:'补充 · 新增客户：扫码邀请',short:'客户扫码成为会员',goal:'让客户自己扫码成为会员，之后可以记录 TA 在小程序里的看款喜好。',start:'overview',steps:[
+ {k:'addc',t:'点右上角“新增客户”图标',sel:'#hd-add'},
+ {k:'add:qr',t:'选“扫码邀请”（推荐），出现二维码',sel:'#add-qr'},
+ {k:'qrshare',t:'点“分享”，选择分享方式',sel:'#qr-share'}]}};
 const PAGES=[
  ['overview','经营概览','mod','我的 → 粉丝','参考新版“客户经营”：先看粉丝总览，再是今日待办（直接列出待跟进客户，可切我的待办 / 团队待办）；下面是经营效果、客户分布、转化漏斗。模块是否展示沿用员工现有权限。','6、7B、10、14'],
  ['customers','客户列表','mod','好友页 → 粉丝与客户','原“粉丝与客户”。新增机会筛选、机会提示、批量分配任务。右上“今日机会 / 待办”替代原“等你推上新”。','6、11'],
@@ -308,7 +324,9 @@ const PAGES=[
  ['analysis','经营效果复盘','new','经营概览 → 经营效果 → 复盘','顶部三个 tab：跟进 / 群发 / 发圈，口径统一为 触达 → 进入 → 下单 → 金额。一笔订单只记给最近一次触达，三项相加不重复；发圈以朋友圈里的小程序链接 / 小程序码进入为准，没有曝光数据。与“经营数据”分开，不改经营数据。','16'],
  ['settings','基础设置','new','经营概览 / 我的','机会规则、自动建任务开关、分层口径、话术与标签。员工与权限沿用现有。','17'],
  ['chat','键盘面板','mod','微信聊天 → 微购键盘','按现有输入法还原：输入客户名后上方出现识别条，点开是客户卡（跟进提醒、开单/发订单/余额/发卡券）；点右上角悬浮图标进工作台，“今日跟进客户”进待跟进列表。新增：AI 建议、去推Ta喜欢，以及“发卡券”后面的“她的衣橱”入口。衣橱、商品详情（概览 / 详情）都在键盘面板里切换，不跳页面。','7、7A、9']];
-const NOTES={order:['订单详情','old','现有订单详情。客户详情“最近动态 → 交易”里点“订单详情”进入；新增“成交归因”一行，说明这单是否来自跟进任务。','8、9'],overdue:['逾期任务','new','团队视图点“逾期任务”进入：谁的哪个任务逾期了、逾期几天，可单个或一键催办。','14'],rec:['推荐商品','new','客户详情 AI 建议卡点“推荐款发给她”进入：AI 话术、最近看过、相似款，勾选后发微信推荐。','7'],opplist:['机会清单','new','今日机会点进来，按优先级排序，每位客户带一句理由。','6'],team:['未跟进客户','new','团队视图点员工后进入。包含未完成的跟进任务、未处理的机会、久未联系三类。','14'],product:['商品页','old','现有商品页，新增“推给合适的客户”入口，键盘“最近购买”点进来能看各颜色库存。','7A、7B'],pushpick:['推送上新','mod','沿用现有“推送上新”页，只改一处：把“谁可以看”和“推送对象”合并成一项“推送对象”，三选一：全部 / 推荐感兴趣的人 / 指定。','7B'],pushcust:['选择客户','new','“推荐感兴趣的人”：系统按偏好推荐老客，每位带理由；“指定”：从全部客户里手动挑。勾选后确定，回到推送页。','7B'],pushconfirm:['确认任务','new','确认类型、客户、商品，之后进入现有半自动发送。','7B']};
+const NOTES={addone:['新增客户 · 单个录入','new','经营概览右上角“新增客户”→ 单个录入。姓名和手机号至少填一项；手机号实时查重（试试输入 13912347765）；归属默认是自己，店长可改。保存后状态为“未绑定”。','冷启动'],bulk:['批量上传历史客户','new','图片 / 表格 / 文字三种方式。表格提供模板；图片和文字由系统识别。点“开始识别”后进入预览确认，不会直接入库。导购和店长都能批量上传，导购归属自己。','冷启动'],bulkpv:['确认识别结果','new','每行分四类：正常、待补全（没手机号，仍可导入）、重复（按手机号，可选合并或跳过）、存疑（必须修改或删除才能导入）。底部确认归属：导购固定自己，店长可统一指定或按表格导购列。','冷启动'],bulkdone:['导入完成','new','显示新导入、合并、跳过、待补全的数量。导入的客户为“未绑定”，提示去发起扫码邀请。','冷启动'],order:['订单详情','old','现有订单详情。客户详情“最近动态 → 交易”里点“订单详情”进入；新增“成交归因”一行，说明这单是否来自跟进任务。','8、9'],overdue:['逾期任务','new','团队视图点“逾期任务”进入：谁的哪个任务逾期了、逾期几天，可单个或一键催办。','14'],rec:['推荐商品','new','客户详情 AI 建议卡点“推荐款发给她”进入：AI 话术、最近看过、相似款，勾选后发微信推荐。','7'],opplist:['机会清单','new','今日机会点进来，按优先级排序，每位客户带一句理由。','6'],team:['未跟进客户','new','团队视图点员工后进入。包含未完成的跟进任务、未处理的机会、久未联系三类。','14'],product:['商品页','old','现有商品页，新增“推给合适的客户”入口，键盘“最近购买”点进来能看各颜色库存。','7A、7B'],pushpick:['推送上新','mod','沿用现有“推送上新”页，只改一处：把“谁可以看”和“推送对象”合并成一项“推送对象”，三选一：全部 / 推荐感兴趣的人 / 指定。','7B'],pushcust:['选择客户','new','“推荐感兴趣的人”：系统按偏好推荐老客，每位带理由；“指定”：从全部客户里手动挑。勾选后确定，回到推送页。','7B'],pushconfirm:['确认任务','new','确认类型、客户、商品，之后进入现有半自动发送。','7B']};
+const ic=(d,c='#3B5BA8',z=18)=>`<svg width="${z}" height="${z}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const addIcon=(id)=>`<span id="${id}" data-act="addc" style="cursor:pointer;display:inline-flex" aria-label="新增客户">${ic('<circle cx="9" cy="8" r="4"/><path d="M2 20c0-3.5 3-6 7-6M18 14v6M15 17h6"/>','#1D2129',22)}</span>`;
 const hd=(t,o={})=>`<div class="hd ${o.left?'left':''}">${o.back===false?'<span class="bk"></span>':'<button class="bk" data-act="back" aria-label="返回">‹</button>'}<div class="t">${t}</div><div class="r">${o.r||''}</div></div>`;
 const lab=(t,c='n')=>`<span class="lab ${c}">${t}</span>`;
 const go=(id)=>({'data-go':id});
@@ -325,7 +343,7 @@ function vOverview(){
  const mine=['c1','c2','c3','c4'].map(k=>{const c=C[k],dn=st.fdone[k],due=st.due&&k==='c1';const why=due?'跟进提醒：'+(st.rnote||'客户说过两天再看看'):c.r;return `<div class="row click" id="todo-${k}" data-go="detail:${k}" style="${dn?'opacity:.5':''}"><span style="width:7px;height:7px;border-radius:50%;background:${due?'var(--red)':'var(--org)'};flex:none"></span><div class="m" style="flex:1"><b style="font-size:16px">${c.n}</b> ${dn?lab('已跟进','g'):due?lab('到期提醒','r'):lab(c.opp,c.oc)}<div style="white-space:normal">${why}</div></div><button class="btn sm" style="background:var(--g2);color:#07934B;font-weight:500">${dn?'已处理':'去跟进 ›'}</button></div>`}).join('');
  const D=DIST[st.dist];
  const mx=Math.max(...D.map(x=>x[1]));
- return hd('经营概览',{back:false,r:'<span class="link" data-go="settings">设置</span>'})+`<div class="body">
+ return hd('经营概览',{back:false,r:`<span style="display:inline-flex;align-items:center;gap:14px">${addIcon('hd-add')}<span id="hd-search" data-act="srch" style="cursor:pointer;display:inline-flex" aria-label="搜索客户">${ic('<circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/>','#1D2129',22)}</span><span class="link" data-go="settings">设置</span></span>`})+`<div class="body">
  <div class="card"><div class="ch"><b style="font-size:17px">粉丝总览</b></div><div class="grid g3"><div class="stat" data-go="customers"><b>36</b><span>昨日新增 ›</span></div><div class="stat" data-go="customers"><b>386</b><span>本月新增 ›</span></div><div class="stat" id="fans-total" data-go="customers"><b>8,642</b><span>客户总数 ›</span></div></div>
   <div class="grid" style="grid-template-columns:repeat(4,1fr);margin-top:12px;border-top:1px solid var(--line);padding-top:12px;text-align:center"><span data-act="toast" data-arg="访客足迹【已有】" style="cursor:pointer">访客足迹</span><span id="qa-push" data-act="push" style="cursor:pointer;color:#C66A0C;font-weight:600">推上新</span><span data-go="tasks" style="cursor:pointer">任务中心</span><span id="qa-perf" data-go="perf" style="cursor:pointer">员工业绩</span></div></div>
  <div class="card"><div class="ch"><b style="font-size:17px">今日待办</b></div>
@@ -431,9 +449,9 @@ function vCustomers(){
  const fc=fCount();
  const total=(fc||!CTOT[st.cf])?String(vis.length):CTOT[st.cf];
  const ic=(d,c='#3B5BA8',z=18)=>`<svg width="${z}" height="${z}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
- const head=st.batch?`<div class="hd"><span id="batch-btn" data-act="batch" style="font-size:14px;color:#4A5A8A;min-width:40px">取消</span><div class="t">粉丝与客户</div><div class="r" style="min-width:40px"></div></div>`:hd('粉丝与客户 <span style="font-size:10px;color:#86909C">⌄</span>',{r:`<span style="display:flex;gap:12px;font-size:14px;color:#4A5A8A;white-space:nowrap"><span id="batch-btn" data-act="batch">批量</span><span data-act="toast" data-arg="邀请客户">邀请</span></span>`});
+ const head=st.batch?`<div class="hd"><span id="batch-btn" data-act="batch" style="font-size:14px;color:#4A5A8A;min-width:40px">取消</span><div class="t">粉丝与客户</div><div class="r" style="min-width:40px"></div></div>`:hd('粉丝与客户 <span style="font-size:10px;color:#86909C">⌄</span>',{r:`<span style="display:flex;gap:12px;align-items:center;font-size:14px;color:#4A5A8A;white-space:nowrap"><span id="batch-btn" data-act="batch">批量</span>${addIcon('cust-add')}</span>`});
  const tools=st.batch?'':`<div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;color:#1D2129;overflow-x:auto">${[['客户对账','<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/>'],['访客足迹','<circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><circle cx="8" cy="16" r="3"/><circle cx="16" cy="16" r="3"/>'],['经营任务','<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M9 3v4M15 3v4M8.5 13l2.5 2.5 4.5-5"/>'],['设置','<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>']].map((x,i)=>`<span style="display:flex;gap:5px;align-items:center;flex:none;${i?'padding-left:9px;margin-left:9px;border-left:1px solid #E5E6EB;':''}white-space:nowrap" ${x[0]==='经营任务'?'data-go="tasks"':`data-act="toast" data-arg="${x[0]}"`}>${ic(x[1])}${x[0]}</span>`).join('')}</div>`;
- const search=`<div style="display:flex;gap:10px;align-items:center;margin-top:${st.batch?0:12}px"><div style="flex:1;height:36px;background:#F2F3F5;border-radius:8px;display:flex;align-items:center;gap:8px;padding:0 10px;font-size:14px">${ic('<circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/>','#6B7280',18)}<input class="in" placeholder="搜索" style="border:0;background:none;padding:0;height:auto;flex:1;font-size:14px;min-width:0"></div><span id="f-btn" data-act="fopen" style="text-align:center;color:#2E9E4F;font-size:10px;line-height:1.1;position:relative;flex:none">${ic('<path d="M4 5h16l-6 8v6l-4-2v-4z"/>','#2E9E4F',20)}${fc?`<b style="position:absolute;right:-6px;top:-5px;background:#2E9E4F;color:#fff;border-radius:8px;min-width:15px;line-height:15px;font-size:10px">${fc}</b>`:''}<br>筛选</span></div>`;
+ const search=`<div style="display:flex;gap:10px;align-items:center;margin-top:${st.batch?0:12}px"><div style="flex:1;height:36px;background:#F2F3F5;border-radius:8px;display:flex;align-items:center;gap:8px;padding:0 10px;font-size:14px">${ic('<circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/>','#6B7280',18)}<input class="in" id="csearch" placeholder="搜索" style="border:0;background:none;padding:0;height:auto;flex:1;font-size:14px;min-width:0"></div><span id="f-btn" data-act="fopen" style="text-align:center;color:#2E9E4F;font-size:10px;line-height:1.1;position:relative;flex:none">${ic('<path d="M4 5h16l-6 8v6l-4-2v-4z"/>','#2E9E4F',20)}${fc?`<b style="position:absolute;right:-6px;top:-5px;background:#2E9E4F;color:#fff;border-radius:8px;min-width:15px;line-height:15px;font-size:10px">${fc}</b>`:''}<br>筛选</span></div>`;
  const tabs=`<div style="display:flex;overflow-x:auto;white-space:nowrap;margin:10px -12px 0;padding:0 12px;border-top:1px solid #F0F1F3">${CTABS.map((t,i)=>`<span id="cf-${t[0]}" data-act="cf" data-arg="${t[0]}" style="padding:11px 0;margin-right:11px;font-size:14px;flex:none;${i?'padding-left:11px;border-left:1px solid #E5E6EB;':''}${st.cf===t[0]?'font-weight:700;color:#1D2129':'color:#6B7280'}">${t[0]}${t[1]?'('+t[1]+')':''}</span>`).join('')}</div>`;
  const sortRow=st.batch?'<div style="height:10px"></div>':`<div style="display:flex;justify-content:space-between;color:#6B7280;font-size:12px;margin:10px 4px 8px"><span>共 <b>${total}</b> 人 · 按${st.sk}排序</span><span id="sort-btn" style="color:#4A5A8A" data-act="sortopen">排序 <small>▾</small></span></div>`;
  const sortPop=st.sortOpen?`<div data-act="sortclose" style="position:absolute;inset:0;z-index:30"></div><div id="sort-pop" style="position:absolute;z-index:31;left:12px;right:12px;top:150px;max-height:430px;overflow-y:auto;background:#fff;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:0 18px">${SORTS.map((k,i)=>`<div id="so-${k}" data-act="sortset" data-arg="${k}" style="display:flex;justify-content:space-between;align-items:center;padding:13px 0;font-size:14px;${i?'border-top:1px solid #F0F1F3;':''}${st.sk===k?'color:#2E9E4F;font-weight:700':''}">${k}${st.sk===k?'<span style="font-size:16px">✓</span>':''}</div>`).join('')}</div>`:'';
@@ -759,7 +777,69 @@ function vPushconfirm(){
 function vWechat(){
  return `<div class="hd wxh" style="background:#EDEDED"><span class="bk"></span><div class="t">微信</div><div class="r"></div></div><div class="body wxh" style="background:#EDEDED;text-align:center;padding-top:80px"><div style="width:64px;height:64px;border-radius:50%;background:var(--g);color:#fff;display:grid;place-items:center;margin:0 auto 14px;font-size:28px">✓</div><b style="font-size:17px">任务已生成</b><div class="sm mut" style="margin:6px 0 20px">已进入现有“半自动发送”，到这里原型结束</div><button class="btn" data-act="home">回到经营概览</button></div>`;
 }
-const VIEWS={funnel:vFunnel,order:vOrder,rec:vRec,overview:vOverview,opplist:vOpp,overdue:vOverdue,team:vTeam,customers:vCustomers,detail:vDetail,tasks:vTasks,perf:vPerf,analysis:vAnalysis,settings:vSettings,chat:vChat,product:vProduct,pushpick:vPushpick,pushdone:vPushdone};
+/* ===== 新增客户：单个录入 / 批量上传 / 扫码邀请 ===== */
+function addPhone(el){const d=el.value.replace(/\D/g,''),t=document.getElementById('ap-tip');if(!t)return;const dup=d==='13912347765';t.style.display=dup?'block':'none';t.innerHTML=dup?'已存在客户「陈姐」，<span class="link" data-act="toast" data-arg="查看档案">查看档案</span>':''}
+const ownerBlock=()=>st.role==='mgr'?`<div class="mut sm" style="margin:2px 0 6px">归属导购（默认是自己，可改）</div>${staffPick(picked)}`:`<div class="row"><div class="m"><b style="font-size:14px">归属导购</b><div>你没有分配权限，归属自己</div></div><b>Jolly <span class="sm mut">我</span></b></div>`;
+function vAddOne(){
+ const f=(l,ph,o={})=>`<div class="fld"${o.last?' style="border:0"':''}><span class="mut" style="width:96px">${l}</span>${o.pick?`<span class="mut" style="flex:1;color:#B8BEC8" data-act="toast" data-arg="${l}（已有功能）">${ph}</span><span class="mut">›</span>`:`<input ${o.id?`id="${o.id}"`:''} ${o.oninput?`oninput="${o.oninput}"`:''} ${o.type?`type="${o.type}"`:''} inputmode="${o.im||'text'}" placeholder="${ph}">`}</div>`;
+ return `<div class="hd"><button class="bk" data-act="back" style="width:auto;font-size:15px">取消</button><div class="t">新建客户</div><button class="btn sm" id="aone-ok" data-act="aone" style="height:32px">保存</button></div>
+ <div class="body" style="background:#F5F6F8;padding:0"><div style="background:#fff;padding:0 14px">
+ <div class="fld"><span class="mut" style="width:96px;color:var(--ink)">客户备注<span class="sm mut">(必填)</span></span><input id="an" placeholder="输入"></div>
+ ${f('手机号','输入手机号',{id:'ap',im:'tel',oninput:'addPhone(this)'})}
+ <div id="ap-tip" class="sm" style="color:var(--org);padding:0 0 4px 108px;display:none"></div>
+ ${f('会员编号','支持4~7位数字',{im:'numeric'})}${f('微信号','输入微信号')}${f('会员生日','选择日期',{type:'date',last:1})}</div>
+ <div style="background:#fff;padding:0 14px;margin-top:10px">${f('最近消费','选择日期（精确到天）',{type:'date'})}${f('累计消费','输入金额，元',{im:'decimal'})}${f('消费次数','输入次数',{im:'numeric',last:1})}</div>
+ <div style="background:#fff;padding:0 14px;margin-top:10px">${f('初始余额','¥ 0',{im:'decimal'})}${f('标签/分组','选择',{pick:1})}${f('描述说明','输入描述说明')}
+ <div style="padding:13px 0"><span class="mut">图片</span><div style="width:64px;height:64px;background:#F2F3F5;border-radius:8px;margin-top:10px;text-align:center;line-height:60px;font-size:30px;color:#6B7280;cursor:pointer" data-act="toast" data-arg="添加图片（已有功能）">+</div></div></div>
+ <div style="background:#fff;padding:0 14px;margin-top:10px">${f('省市','选择',{pick:1})}${f('收货信息','设置',{pick:1,last:1})}</div></div>`;
+}
+function vBulk(){
+ const m=st.bm;
+ const tabs=[['img','图片'],['xls','表格'],['txt','文字']].map(([k,t])=>`<span class="chip ${m===k?'on':''}" id="bm-${k}" data-act="bm" data-arg="${k}">${t}</span>`).join('');
+ const dz=(t,s)=>`<div style="border:1.5px dashed #C9CDD4;border-radius:10px;padding:26px 12px;text-align:center;background:#FAFAFB;cursor:pointer" data-act="toast" data-arg="已选择文件（示意）"><div style="font-size:14px;font-weight:600">${t}</div><div class="sm mut" style="margin-top:4px">${s}</div></div>`;
+ const body={
+  img:dz('点击上传图片','会员本、客户登记表、聊天截图均可，可多选')+`<div class="sm mut" style="margin-top:8px">系统会识别姓名、手机号、消费等信息，识别后先预览，确认才入库</div>`,
+  xls:`<div class="row" style="padding-top:0"><div class="m"><b style="font-size:14px">先下载模板</b><div>姓名、手机号、生日、喜好、最近消费、累计消费、归属导购</div></div><span class="link" data-act="toast" data-arg="已下载模板">下载</span></div>`+dz('点击上传表格','支持 .xlsx / .csv，也可上传老系统导出的表')+`<div class="sm mut" style="margin-top:8px">表头与模板不一致时，系统会尝试自动对应</div>`,
+  txt:`<textarea class="in" style="height:150px;resize:none" placeholder="直接粘贴名单，一行一位，例如：&#10;王丽 13800002201 去年买过风衣&#10;陈姐 13912347765 常买通勤款"></textarea><div class="sm mut" style="margin-top:8px">可以粘贴微信聊天、备忘录里的名单</div>`}[m];
+ return hd('批量上传历史客户')+`<div class="body"><div class="card"><div class="chips" style="margin-bottom:12px">${tabs}</div>${body}</div>
+ <div class="card sm" style="line-height:1.7;color:#4E5969"><b style="color:var(--ink)">导入规则</b><br>手机号是合并身份的依据；没有手机号的会标“待补全”，仍可导入。<br>手机号相同的视为同一位客户，不会重复新建。<br>${st.role==='mgr'?'店长默认按表格里的导购列归属，也可以统一指定。':'导入的客户归属自己。'}</div></div>
+ <div class="foot"><button class="btn block" id="bulk-go" data-act="bgo">开始识别</button></div>`;
+}
+const BR=[['王丽','138****2201','累计 ¥4,860 · 最近消费 3 个月前','ok'],['陈姐','139****7765','累计 ¥12,300 · 最近消费 去年 11 月','ok'],['林女士','','累计 ¥2,150','np'],['张敏','135****0098','最近消费 8 个月前','ok'],['刘小雨','186****5532','已有客户「刘小雨」· 归属 yuanzx','dup'],['周姐','1776****12','手机号位数不对，识别可能有误','warn'],['吴女士','','来源：会员本第 2 页','np'],['赵晴','150****3318','累计 ¥980','ok']];
+const brLeft=()=>BR.map((r,i)=>[...r,i]).filter(r=>!st.bdel[r[4]]);
+const brStat=r=>r[3]==='warn'&&st.bfix[r[4]]?'ok':r[3];
+const brCnt=()=>{const c={ok:0,np:0,dup:0,warn:0};brLeft().forEach(r=>c[brStat(r)]++);return c};
+function vBulkPv(){
+ const L=brLeft(),c=brCnt();
+ const F=[['全部','全部',L.length],['ok','正常',c.ok],['np','待补全',c.np],['dup','重复',c.dup],['warn','存疑',c.warn]];
+ const show=L.filter(r=>st.bf==='全部'||brStat(r)===st.bf);
+ const tg={ok:lab('正常','n'),np:lab('待补全','o'),dup:lab('重复','b'),warn:lab('存疑','r')};
+ const rows=show.map((r,j)=>{const s=brStat(r),i=r[4],ph=s==='ok'&&r[3]==='warn'?'177****4512':r[1];
+  const act=s==='warn'?`<button class="btn sm sec" data-act="bfix" data-arg="${i}">修改</button>`:s==='np'?`<span class="link sm" data-act="toast" data-arg="补充手机号">补手机号</span>`:'';
+  return `<div class="row" id="br-${i}"><div class="m"><b>${r[0]}</b> ${tg[s]}<div>${ph||'无手机号'} · ${s==='ok'&&r[3]==='warn'?'已修改':r[2]}</div></div>${act}<span class="mut sm" style="cursor:pointer;padding-left:6px" data-act="bdelr" data-arg="${i}">删除</span></div>`}).join('')||'<div class="sm mut" style="text-align:center;padding:16px">这一类下没有记录</div>';
+ const dupCard=c.dup?`<div class="card"><div class="ch"><b>重复客户怎么处理</b></div><div class="chips">${[['merge','合并更新空字段'],['skip','跳过，不改动已有客户']].map(([k,t])=>`<span class="chip ${st.bdup===k?'on':''}" id="bdup-${k}" data-act="bdup" data-arg="${k}">${t}</span>`).join('')}</div></div>`:'';
+ const own=st.role==='mgr'?`<div class="chips" style="margin-bottom:8px">${[['col','按表格里的导购列'],['all','统一指定']].map(([k,t])=>`<span class="chip ${st.bown===k?'on':''}" id="bown-${k}" data-act="bown" data-arg="${k}">${t}</span>`).join('')}</div>${st.bown==='all'?staffPick(picked):'<div class="sm mut">导购名对不上的客户进入“待指定”，后续认领；图片和文字没有导购列时，也进入“待指定”</div>'}`:`<div class="row" style="padding:0"><div class="m"><b style="font-size:14px">归属导购</b><div>你没有分配权限，导入的客户归属自己</div></div><b>Jolly <span class="sm mut">我</span></b></div>`;
+ return hd('确认识别结果')+`<div class="body"><div class="card" style="padding:12px 14px"><div class="sm mut" style="margin-bottom:8px">共识别 ${L.length} 人（示意数据），确认后才会入库</div><div class="chips">${F.map(([k,t,n])=>`<span class="chip ${st.bf===k?'on':''}" id="bf-${k}" data-act="bf" data-arg="${k}">${t} ${n}</span>`).join('')}</div></div>
+ <div class="card" style="padding:4px 14px">${rows}</div>${dupCard}
+ <div class="card"><div class="ch"><b>归属导购</b></div>${own}</div></div>
+ <div class="foot"><button class="btn block" id="bimp" data-act="bimp">确认导入</button></div>`;
+}
+function vBulkDone(){
+ const c=st.bres||brCnt(),who=st.role==='staff'?'Jolly':st.bown==='all'?picked:'按表格导购列';
+ const cell=(n,t,col)=>`<div style="background:#F7F8FA;border-radius:10px;padding:12px;text-align:center"><b style="font-size:22px;color:${col||'var(--ink)'}">${n}</b><div class="sm mut">${t}</div></div>`;
+ return hd('导入完成',{back:false})+`<div class="body"><div class="card" style="text-align:center;padding:20px 14px"><div style="width:48px;height:48px;border-radius:24px;background:var(--g);color:#fff;font-size:26px;line-height:48px;margin:0 auto 8px">✓</div><b style="font-size:17px">已导入 ${c.imp} 位客户</b><div class="sm mut" style="margin-top:4px">归属 ${who}，状态为“未绑定”，带“历史导入”标签</div></div>
+ <div class="card"><div class="grid g2" style="gap:8px">${cell(c.imp,'新导入','var(--g)')}${cell(c.merge,'合并到已有客户')}${cell(c.skip,'跳过')}${cell(c.np,'待补全手机号','var(--org)')}</div></div>
+ <div class="card sm" style="line-height:1.7;color:#4E5969"><b style="color:var(--ink)">下一步</b><br>这些客户还没有授权，暂时不能做营销触达。发起扫码邀请，客户扫码授权手机号成为会员后，会自动合并历史档案；待补全的客户也靠扫码补上手机号。</div></div>
+ <div class="foot"><button class="btn grey block" id="bd-view" data-act="bdview">查看客户</button><button class="btn block" id="bd-qr" data-act="bdqr">发起扫码邀请</button></div>`;
+}
+const qrSvg=()=>{const n=21;let seed=11;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280};let s='';
+ for(let y=0;y<n;y++)for(let x=0;x<n;x++){let on;
+  if((x<7&&y<7)||(x>=n-7&&y<7)||(x<7&&y>=n-7)){const a=x>=n-7?x-(n-7):x,b=y>=n-7?y-(n-7):y;on=a===0||a===6||b===0||b===6||(a>=2&&a<=4&&b>=2&&b<=4)}
+  else if((x===7||y===7||x===n-8||y===n-8)&&((x<8&&y<8)||(x>=n-8&&y<8)||(x<8&&y>=n-8)))on=false;
+  else on=rnd()>0.5;
+  if(on)s+=`<rect x="${x}" y="${y}" width="1" height="1"/>`}
+ return `<svg viewBox="-1 -1 ${n+2} ${n+2}" width="150" height="150" fill="#1D2129" style="background:#fff">${s}</svg>`};
+const VIEWS={addone:vAddOne,bulk:vBulk,bulkpv:vBulkPv,bulkdone:vBulkDone,funnel:vFunnel,order:vOrder,rec:vRec,overview:vOverview,opplist:vOpp,overdue:vOverdue,team:vTeam,customers:vCustomers,detail:vDetail,tasks:vTasks,perf:vPerf,analysis:vAnalysis,settings:vSettings,chat:vChat,product:vProduct,pushpick:vPushpick,pushdone:vPushdone};
 
 /* engine */
 function kbPhone(el){const m=String(el.value).match(/1[3-9]\d[\s-]?\d{4}[\s-]?\d{4}/);const t=document.getElementById('kb-phone-tip');if(m){st.phone=m[0].replace(/\D/g,'');if(el.value!==st.phone)el.value=st.phone;if(t)t.textContent='已识别 '+st.phone}else{st.phone=el.value.replace(/\D/g,'');if(t)t.textContent=''}}
@@ -807,12 +887,34 @@ function renderNote(){
  $('#note').innerHTML=h;
 }
 function sheet(title,body,label,fn){ setTimeout(hint,0);
- const s=$('#sheet');s.innerHTML=`<div><div style="display:flex;justify-content:space-between;margin-bottom:12px"><b style="font-size:16px">${title}</b><button data-act="closesheet" class="mut">关闭</button></div>${body}<button class="btn" style="width:100%;margin-top:12px" id="sheet-ok">${label}</button></div>`;
+ const s=$('#sheet');s.innerHTML=`<div><div style="display:flex;justify-content:space-between;margin-bottom:12px"><b style="font-size:16px">${title}</b><button data-act="closesheet" class="mut">关闭</button></div>${body}<button class="btn" style="width:100%;margin-top:12px${label?'':';display:none'}" id="sheet-ok">${label}</button></div>`;
  s.classList.add('on'); $('#sheet-ok').onclick=()=>{s.classList.remove('on');fn()};
 }
 const staffPick=(def)=>`<div id="spick">${['Jolly','yuanzx','风风疯疯','斯乔一'].map(n=>`<div class="opt ${n===def?'on':''}" data-act="spick" data-arg="${n}"><b>${n}</b>${n==='Jolly'?'<span class="sm mut">我</span>':''}</div>`).join('')}</div>`;
 let picked='Jolly';
 // 任务时间 + 计划说明（单客户建任务、批量分配、孤儿客户分配共用）
+function openAddC(){
+ const o=[['qr','扫码邀请','客户扫码成为会员，记录 TA 在小程序里的看款喜好','推荐'],['bulk','批量上传','图片、表格、文字，快速导入历史客户'],['one','单个录入','填写一位客户的资料']];
+ sheet('新增客户',o.map(([k,n,d,tg])=>`<div class="row click" id="add-${k}" data-act="addt" data-arg="${k}" style="padding:14px 2px"><div class="m"><b style="font-size:16px">${n}</b> ${tg?lab(tg,'g'):''}<div style="margin-top:3px;white-space:normal">${d}</div></div><span class="mut" style="font-size:20px">›</span></div>`).join(''),'',()=>{});
+ const b=$('#sheet-ok');if(b)b.style.display='none';
+}
+function openQr(){
+ const old=$('#phone>#qrmask');if(old)old.remove();
+ const m=document.createElement('div');m.id='qrmask';m.dataset.act='qrclose';
+ m.style.cssText='position:absolute;inset:0;background:rgba(0,0,0,.6);z-index:15;display:flex;align-items:center;justify-content:center';
+ m.innerHTML=`<div data-act="noop" style="background:#fff;border-radius:16px;padding:22px 22px 18px;width:260px;text-align:center"><b style="font-size:16px">扫码成为会员</b><div style="background:var(--g2);color:#07934B;border-radius:8px;padding:8px 10px;margin-top:10px;font-size:13px;font-weight:600">成为会员领专属优惠，新品先知道</div><div style="margin:12px auto 6px;display:inline-block">${qrSvg().replace('width="150" height="150"','width="190" height="190"')}</div><div style="height:14px"></div><button class="btn" id="qr-share" data-act="qrshare" style="width:100%">分享</button><div class="sm mut" style="margin-top:10px;line-height:1.6;text-align:left">客户扫码后，可记录 TA 的看款喜好</div></div>`;
+ $('#phone').appendChild(m);
+}
+function openShare(){
+ const it=(t,bg,g)=>`<div data-act="toast" data-arg="${t}（示意）" style="text-align:center;width:20%;cursor:pointer"><div style="width:48px;height:48px;border-radius:24px;background:${bg};color:#fff;font-size:18px;font-weight:700;line-height:48px;margin:0 auto 6px">${g}</div><div style="font-size:12px;color:#4E5969">${t}</div></div>`;
+ const r1=[['微信','#4CC26B','微'],['朋友圈','#F5A623','圈'],['微信收藏','#FF9500','藏'],['QQ','#1BA7FF','Q'],['QQ空间','#FFB43A','空']];
+ const r2=[['小红书','#FF4D4F','书'],['微博','#FF6A55','博'],['抖音','#1D2129','抖'],['快手','#FF5A1F','快'],['更多','#fff','···']];
+ const r3=[['小程序链接','#fff','⌘'],['网址链接','#fff','∞'],['保存至手机','#fff','↓']];
+ const row=(a,l)=>`<div style="display:flex;margin-bottom:16px;${l?'':''}">${a.map(([t,bg,g])=>it(t,bg,bg==='#fff'?`<span style="color:#1D2129">${g}</span>`:g).replace(bg==='#fff'?'background:#fff':'~','background:#fff;border:1px solid #E5E6EB')).join('')}</div>`;
+ sheet('分享',row(r1)+row(r2)+'<div style="border-top:1px solid var(--line);padding-top:16px"></div>'+row(r3),'',()=>{});
+ const b=$('#sheet-ok');if(b)b.style.display='none';
+ $('#sheet').style.zIndex=30;
+}
 const pad2=n=>String(n).padStart(2,'0');
 const dstr=off=>{const d=new Date();d.setDate(d.getDate()+off);return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())};
 const taskExtra=(ph)=>`<div class="mut sm" style="margin:12px 0 6px">到期时间 <span style="color:var(--red)">*</span></div>
@@ -850,7 +952,7 @@ const A={
  back,stop(){},toast:a=>toast(a),
  page:a=>{st.scen=null;st.done={};nav(a,1)},
  home:()=>{nav('overview',1)},
- scen:a=>{const S=SCEN[a];st.chat=S.chat||'c1';st.msg=S.msg||'';st.remind=a==='S6'?'':'明天 10:00 跟进';st.rnote='';st.rd='后天 10:00';st.fdone={};st.mdone={};st.tstat='todo';st.tf='全部';st.ttab='我执行';st.atab='跟进';st.adim={};st.fk='全部';st.ft='近30天';st.fsr='全部';CREATED.length=0;CREATED.push(...CREATED0.map(x=>({...x})));st.due=0;st.urged={};st.ptask=null;st.bn=0;st.bnx=0;st.cf='全部';st.batch=false;st.sel={};st.alay=null;st.aemp=null;st.gsel={};st.sentSet=0;st.rsel={A102:1,C201:1,B015:1,D088:1,E033:1};st.need={风格:'通勤',尺码:'M',预算:'500-1000'};st.phone='';st.bd={y:'',m:'',d:''};st.wpick=[];st.wmode=0;st.wsel={};ORPH.forEach(k=>C[k].o='无归属');TASKS.length=0;TASKS.push(...TASKS0);st.scen=a;st.done={};st.seg='mine';st.per='today';st.kb='search';st.kid=0;st.sent=false;st.color=null;st.fromChat=false;st.psel={};st.pm='all';st.pmt='all';st.dtab='全部';st.sort={};st.pn='';st.pprod=null;st.uSel={};st.uBatch=false;nav(SCEN[a].start,1)},
+ scen:a=>{const S=SCEN[a];st.chat=S.chat||'c1';st.msg=S.msg||'';st.remind=a==='S6'?'':'明天 10:00 跟进';st.rnote='';st.rd='后天 10:00';st.fdone={};st.mdone={};st.tstat='todo';st.tf='全部';st.ttab='我执行';st.atab='跟进';st.adim={};st.fk='全部';st.ft='近30天';st.fsr='全部';CREATED.length=0;CREATED.push(...CREATED0.map(x=>({...x})));st.due=0;st.urged={};st.ptask=null;st.bn=0;st.bnx=0;st.cf='全部';st.batch=false;st.sel={};st.alay=null;st.aemp=null;st.gsel={};st.sentSet=0;st.rsel={A102:1,C201:1,B015:1,D088:1,E033:1};st.need={风格:'通勤',尺码:'M',预算:'500-1000'};st.phone='';st.bd={y:'',m:'',d:''};st.wpick=[];st.wmode=0;st.wsel={};ORPH.forEach(k=>C[k].o='无归属');TASKS.length=0;TASKS.push(...TASKS0);const qm0=$('#phone>#qrmask');if(qm0)qm0.remove();st.bdel={};st.bfix={};st.bf='全部';st.bdup='merge';st.bown='col';st.bm='img';st.scen=a;st.done={};st.seg='mine';st.per='today';st.kb='search';st.kid=0;st.sent=false;st.color=null;st.fromChat=false;st.psel={};st.pm='all';st.pmt='all';st.dtab='全部';st.sort={};st.pn='';st.pprod=null;st.uSel={};st.uBatch=false;nav(SCEN[a].start,1)},
  seg:a=>{st.seg=a;if(a==='team')ev('team');render()},
  per:a=>{st.per=a;if(a==='week')ev('week');render()},
  opp:a=>{st.tf='跟进';st.tstat='todo';st.ttab='我执行';nav('tasks')},
@@ -860,6 +962,13 @@ const A={
  remind:()=>{ev('act');toast('已提醒斯乔一跟进 8 位客户');render()},
  reassign:a=>{picked='Jolly';sheet(a==='batch'?'批量重新分配':'转派给',staffPick('Jolly')+'<div class="mut sm" style="margin:12px 0 6px">转派说明（选填）</div><textarea class="in" placeholder="比如：她常在下午回复，麻烦下午跟进" style="height:64px;resize:none"></textarea><div class="sm mut" style="margin-top:6px">任务原到期时间不变</div>','确认',()=>{ev('act');st.uBatch=false;st.uSel={};toast('已转派，客户和未完成任务一起转移');render()})},
  spick:a=>{picked=a;document.querySelectorAll('#spick .opt').forEach(e=>e.classList.toggle('on',e.dataset.arg===a))},
+ srch:()=>{ev('srch');nav('customers');setTimeout(()=>{const i=$('#csearch');if(i)i.focus()},50)},
+ addc:()=>{ev('addc');openAddC()},addt:a=>{ev('add:'+a);$('#sheet').classList.remove('on');if(a==='qr'){openQr();return}nav(({one:'addone',bulk:'bulk'})[a])},qrshare:()=>{ev('qrshare');openShare()},afill:()=>{ev('afill');[['an','林小夏'],['ap','13800001234']].forEach(([i,v])=>{const e=$('#'+i);if(e){e.value=v;e.setAttribute('value',v)}})},qrclose:()=>{const m=$('#phone>#qrmask');if(m)m.remove()},
+ aone:()=>{const n=($('#an')||{}).value||'',p=($('#ap')||{}).value||'';if(!n.trim()){toast('请填写客户备注');return}ev('aone');toast('已保存，状态为“未绑定”，可发起邀请');back()},
+ bm:a=>{st.bm=a;render()},bgo:()=>{ev('bgo');st.bdel={};st.bfix={};st.bf='全部';st.bdup='merge';st.bown='col';picked='Jolly';toast('已识别 8 人，请确认');nav('bulkpv')},
+ bf:a=>{st.bf=a;render()},bfix:a=>{ev('bfix');st.bfix[a]=1;toast('已修改手机号');render()},bdelr:a=>{st.bdel[a]=1;render()},bdup:a=>{st.bdup=a;render()},bown:a=>{st.bown=a;render()},
+ bimp:()=>{const c=brCnt();if(c.warn){toast('还有 '+c.warn+' 条存疑记录，请修改或删除');return}ev('bimp');st.bres={imp:c.ok+c.np,np:c.np,merge:st.bdup==='merge'?c.dup:0,skip:st.bdup==='skip'?c.dup:0};nav('bulkdone')},
+ bdview:()=>{st.hist=[];nav('customers')},bdqr:()=>{ev('bdqr');openQr()},
  setrole:a=>{st.role=a;$('#sheet').classList.remove('on');render()},
  tday:a=>{$('#tdate').value=dstr(+a)},ttime:a=>{$('#ttm').value=a},
  closesheet:()=>$('#sheet').classList.remove('on'),
